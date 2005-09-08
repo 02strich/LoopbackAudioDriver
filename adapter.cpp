@@ -3,46 +3,35 @@
 Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
 
 Module Name:
-
     adapter.cpp
 
 Abstract:
-
     Setup and miniport installation.  No resources are used by msvad.
-
 --*/
 
-//
 // All the GUIDS for all the miniports end up in this object.
-//
 #define PUT_GUIDS_HERE
 
-#include <msvad.h>
+#include "msvad.h"
 #include "common.h"
 
 //-----------------------------------------------------------------------------
 // Defines                                                                    
 //-----------------------------------------------------------------------------
-
 // BUGBUG set this to number of miniports
 #define MAX_MINIPORTS 3     // Number of maximum miniports.
 
 //-----------------------------------------------------------------------------
 // Externals
 //-----------------------------------------------------------------------------
-
-NTSTATUS
-CreateMiniportWaveCyclicMSVAD
-( 
+NTSTATUS CreateMiniportWaveCyclicMSVAD( 
     OUT PUNKNOWN *,
     IN  REFCLSID,
     IN  PUNKNOWN,
     IN  POOL_TYPE
 );
 
-NTSTATUS
-CreateMiniportTopologyMSVAD
-( 
+NTSTATUS CreateMiniportTopologyMSVAD( 
     OUT PUNKNOWN *,
     IN  REFCLSID,
     IN  PUNKNOWN,
@@ -52,17 +41,12 @@ CreateMiniportTopologyMSVAD
 //-----------------------------------------------------------------------------
 // Referenced forward.
 //-----------------------------------------------------------------------------
-
-extern "C" NTSTATUS
-AddDevice
-( 
+extern "C" NTSTATUS AddDevice( 
     IN  PDRIVER_OBJECT,
     IN  PDEVICE_OBJECT
 );
 
-NTSTATUS
-StartDevice
-( 
+NTSTATUS StartDevice( 
     IN  PDEVICE_OBJECT,      
     IN  PIRP,                
     IN  PRESOURCELIST        
@@ -71,49 +55,36 @@ StartDevice
 //-----------------------------------------------------------------------------
 // Functions
 //-----------------------------------------------------------------------------
-
-//=============================================================================
 #pragma code_seg("INIT")
-extern "C" NTSTATUS
-DriverEntry
-( 
+extern "C" NTSTATUS DriverEntry( 
     IN  PDRIVER_OBJECT          DriverObject,
     IN  PUNICODE_STRING         RegistryPathName
 )
 {
 /*++
-
 Routine Description:
-
   Installable driver initialization entry point.
   This entry point is called directly by the I/O system.
 
   All audio adapter drivers can use this code without change.
 
 Arguments:
-
   DriverObject - pointer to the driver object
-
   RegistryPath - pointer to a unicode string representing the path,
                    to driver-specific key in the registry.
 
 Return Value:
-
   STATUS_SUCCESS if successful,
   STATUS_UNSUCCESSFUL otherwise.
-
 --*/
     PAGED_CODE();
 
-    NTSTATUS                    ntStatus;
+    NTSTATUS ntStatus;
 
     DPF(D_TERSE, ("[DriverEntry]"));
 
     // Tell the class driver to initialize the driver.
-    //
-    ntStatus =  
-        PcInitializeAdapterDriver
-        ( 
+    ntStatus =  PcInitializeAdapterDriver( 
             DriverObject,
             RegistryPathName,
             AddDevice 
@@ -125,16 +96,12 @@ Return Value:
 
 #pragma code_seg("PAGE")
 //=============================================================================
-extern "C" NTSTATUS
-AddDevice
-( 
+extern "C" NTSTATUS AddDevice( 
     IN  PDRIVER_OBJECT          DriverObject,
     IN  PDEVICE_OBJECT          PhysicalDeviceObject 
 )
 /*++
-
 Routine Description:
-
   The Plug & Play subsystem is handing us a brand new PDO, for which we
   (by means of INF registration) have been asked to provide a driver.
 
@@ -148,29 +115,22 @@ Routine Description:
   uses.
 
 Arguments:
-
   DriverObject - pointer to a driver object
-
   PhysicalDeviceObject -  pointer to a device object created by the
                             underlying bus driver.
 
 Return Value:
-
   NT status code.
-
 --*/
 {
     PAGED_CODE();
 
-    NTSTATUS                    ntStatus;
+    NTSTATUS ntStatus;
 
     DPF(D_TERSE, ("[AddDevice]"));
 
     // Tell the class driver to add the device.
-    //
-    ntStatus = 
-        PcAddAdapterDevice
-        ( 
+    ntStatus = PcAddAdapterDevice( 
             DriverObject,
             PhysicalDeviceObject,
             PCPFNSTARTDEVICE(StartDevice),
@@ -182,9 +142,7 @@ Return Value:
 } // AddDevice
 
 //=============================================================================
-NTSTATUS
-InstallSubdevice
-( 
+NTSTATUS InstallSubdevice( 
     IN  PDEVICE_OBJECT          DeviceObject,
     IN  PIRP                    Irp,
     IN  PWCHAR                  Name,
@@ -199,9 +157,7 @@ InstallSubdevice
 )
 {
 /*++
-
 Routine Description:
-
     This function creates and registers a subdevice consisting of a port       
     driver, a minport driver and a set of resources bound together.  It will   
     also optionally place a pointer to an interface on the port driver in a    
@@ -210,35 +166,22 @@ Routine Description:
     initialization, when the ISR might fire.                                   
 
 Arguments:
-
     DeviceObject - pointer to the driver object
-
     Irp - pointer to the irp object.
-
-    Name - name of the miniport. Passes to PcRegisterSubDevice
- 
+    Name - name of the miniport. Passes to PcRegisterSubDevice 
     PortClassId - port class id. Passed to PcNewPort.
-
     MiniportClassId - miniport class id. Passed to PcNewMiniport.
-
     MiniportCreate - pointer to a miniport creation function. If NULL, 
                      PcNewMiniport is used.
-
     UnknownAdapter - pointer to the adapter object. 
                      Used for initializing the port.
-
     ResourceList - pointer to the resource list.
-
-    PortInterfaceId - GUID that represents the port interface.
-       
+    PortInterfaceId - GUID that represents the port interface.       
     OutPortInterface - pointer to store the port interface
-
     OutPortUnknown - pointer to store the unknown port interface.
 
 Return Value:
-
     NT status code.
-
 --*/
     PAGED_CODE();
 
@@ -246,36 +189,26 @@ Return Value:
     ASSERT(Irp);
     ASSERT(Name);
 
-    NTSTATUS                    ntStatus;
-    PPORT                       port = NULL;
-    PUNKNOWN                    miniport = NULL;
+    NTSTATUS	ntStatus;
+    PPORT		port		= NULL;
+    PUNKNOWN	miniport	= NULL;
      
     DPF_ENTER(("[InstallSubDevice %s]", Name));
 
     // Create the port driver object
-    //
     ntStatus = PcNewPort(&port, PortClassId);
 
     // Create the miniport object
-    //
-    if (NT_SUCCESS(ntStatus))
-    {
-        if (MiniportCreate)
-        {
-            ntStatus = 
-                MiniportCreate
-                ( 
+    if (NT_SUCCESS(ntStatus)) {
+        if (MiniportCreate) {
+            ntStatus = MiniportCreate( 
                     &miniport,
                     MiniportClassId,
                     NULL,
                     NonPagedPool 
                 );
-        }
-        else
-        {
-            ntStatus = 
-                PcNewMiniport
-                (
+        } else {
+            ntStatus = PcNewMiniport(
                     (PMINIPORT *) &miniport, 
                     MiniportClassId
                 );
@@ -283,12 +216,8 @@ Return Value:
     }
 
     // Init the port driver and miniport in one go.
-    //
-    if (NT_SUCCESS(ntStatus))
-    {
-        ntStatus = 
-            port->Init
-            ( 
+    if (NT_SUCCESS(ntStatus)) {
+        ntStatus = port->Init( 
                 DeviceObject,
                 Irp,
                 miniport,
@@ -296,13 +225,9 @@ Return Value:
                 ResourceList 
             );
 
-        if (NT_SUCCESS(ntStatus))
-        {
+        if (NT_SUCCESS(ntStatus)) {
             // Register the subdevice (port/miniport combination).
-            //
-            ntStatus = 
-                PcRegisterSubdevice
-                ( 
+            ntStatus = PcRegisterSubdevice( 
                     DeviceObject,
                     Name,
                     port 
@@ -311,37 +236,27 @@ Return Value:
 
         // We don't need the miniport any more.  Either the port has it,
         // or we've failed, and it should be deleted.
-        //
         miniport->Release();
     }
 
     // Deposit the port interfaces if it's needed.
-    //
-    if (NT_SUCCESS(ntStatus))
-    {
-        if (OutPortUnknown)
-        {
-            ntStatus = 
-                port->QueryInterface
-                ( 
+    if (NT_SUCCESS(ntStatus)) {
+        if (OutPortUnknown) {
+            ntStatus = port->QueryInterface( 
                     IID_IUnknown,
                     (PVOID *)OutPortUnknown 
                 );
         }
 
-        if (OutPortInterface)
-        {
-            ntStatus = 
-                port->QueryInterface
-                ( 
+        if (OutPortInterface) {
+            ntStatus = port->QueryInterface( 
                     PortInterfaceId,
                     (PVOID *) OutPortInterface 
                 );
         }
     }
 
-    if (port)
-    {
+    if (port) {
         port->Release();
     }
 
@@ -349,8 +264,7 @@ Return Value:
 } // InstallSubDevice
 
 //=============================================================================
-NTSTATUS
-StartDevice
+NTSTATUS StartDevice
 ( 
     IN  PDEVICE_OBJECT          DeviceObject,     
     IN  PIRP                    Irp,              
@@ -358,9 +272,7 @@ StartDevice
 )  
 {
 /*++
-
 Routine Description:
-
   This function is called by the operating system when the device is 
   started.
   It is responsible for starting the miniports.  This code is specific to    
@@ -368,17 +280,12 @@ Routine Description:
   to the adapter.                                                            
 
 Arguments:
-
   DeviceObject - pointer to the driver object
-
   Irp - pointer to the irp 
-
   ResourceList - pointer to the resource list assigned by PnP manager
 
 Return Value:
-
   NT status code.
-
 --*/
     PAGED_CODE();
     
@@ -386,45 +293,34 @@ Return Value:
     ASSERT(Irp);
     ASSERT(ResourceList);
 
-    NTSTATUS                    ntStatus        = STATUS_SUCCESS;
-    PUNKNOWN                    unknownTopology = NULL;
-    PUNKNOWN                    unknownWave     = NULL;
-    PADAPTERCOMMON              pAdapterCommon  = NULL;
-    PUNKNOWN                    pUnknownCommon  = NULL;
+    NTSTATUS		ntStatus		= STATUS_SUCCESS;
+    PUNKNOWN		unknownTopology	= NULL;
+    PUNKNOWN		unknownWave		= NULL;
+    PADAPTERCOMMON	pAdapterCommon	= NULL;
+    PUNKNOWN		pUnknownCommon	= NULL;
 
     DPF_ENTER(("[StartDevice]"));
 
     // create a new adapter common object
-    //
-    ntStatus = 
-        NewAdapterCommon
-        ( 
+    ntStatus = NewAdapterCommon( 
             &pUnknownCommon,
             IID_IAdapterCommon,
             NULL,
             NonPagedPool 
         );
-    if (NT_SUCCESS(ntStatus))
-    {
-        ntStatus = 
-            pUnknownCommon->QueryInterface
-            ( 
+
+    if (NT_SUCCESS(ntStatus)) {
+        ntStatus = pUnknownCommon->QueryInterface( 
                 IID_IAdapterCommon,
                 (PVOID *) &pAdapterCommon 
             );
 
-        if (NT_SUCCESS(ntStatus))
-        {
-            ntStatus = 
-                pAdapterCommon->Init(DeviceObject);
+        if (NT_SUCCESS(ntStatus)) {
+            ntStatus = pAdapterCommon->Init(DeviceObject);
 
-            if (NT_SUCCESS(ntStatus))
-            {
-                // register with PortCls for power-management services
-                //    
-                ntStatus = 
-                    PcRegisterAdapterPowerManagement
-                    ( 
+            if (NT_SUCCESS(ntStatus)) {
+                // register with PortCls for power-management services   
+                ntStatus = PcRegisterAdapterPowerManagement( 
                         PUNKNOWN(pAdapterCommon),
                         DeviceObject 
                     );
@@ -433,12 +329,8 @@ Return Value:
     }
 
     // install MSVAD topology miniport.
-    //
-    if (NT_SUCCESS(ntStatus))
-    {
-        ntStatus = 
-            InstallSubdevice
-            ( 
+    if (NT_SUCCESS(ntStatus)) {
+        ntStatus = InstallSubdevice( 
                 DeviceObject,
                 Irp,
                 L"Topology",
@@ -454,12 +346,8 @@ Return Value:
     }
 
     // install MSVAD wavecyclic miniport.
-    //
-    if (NT_SUCCESS(ntStatus))
-    {
-        ntStatus = 
-            InstallSubdevice
-            ( 
+    if (NT_SUCCESS(ntStatus)) {
+        ntStatus = InstallSubdevice( 
                 DeviceObject,
                 Irp,
                 L"Wave",
@@ -479,10 +367,7 @@ Return Value:
         // register wave <=> topology connections
         // This will connect bridge pins of wavecyclic and topology
         // miniports.
-        //
-        ntStatus =
-            PcRegisterPhysicalConnection
-            ( 
+        ntStatus = PcRegisterPhysicalConnection( 
                 DeviceObject,
                 unknownTopology,
                 TopologyPhysicalConnections.ulTopologyOut,
@@ -490,11 +375,8 @@ Return Value:
                 TopologyPhysicalConnections.ulWaveIn
             );
 
-        if (NT_SUCCESS(ntStatus))
-        {
-            ntStatus =
-                PcRegisterPhysicalConnection
-                ( 
+        if (NT_SUCCESS(ntStatus)) {
+            ntStatus = PcRegisterPhysicalConnection( 
                     DeviceObject,
                     unknownWave,
                     TopologyPhysicalConnections.ulWaveOut,
@@ -506,26 +388,17 @@ Return Value:
 
     // Release the adapter common object.  It either has other references,
     // or we need to delete it anyway.
-    //
     if (pAdapterCommon)
-    {
         pAdapterCommon->Release();
-    }
 
     if (pUnknownCommon)
-    {
         pUnknownCommon->Release();
-    }
     
     if (unknownTopology)
-    {
         unknownTopology->Release();
-    }
 
     if (unknownWave)
-    {
         unknownWave->Release();
-    }
 
     return ntStatus;
 } // StartDevice

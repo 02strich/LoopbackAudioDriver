@@ -1,3 +1,5 @@
+#define DBGMESSAGE "[MSVAD-Simple] basedma.cpp: "
+#define DBGPRINT(x) DbgPrint(DBGMESSAGE x)
 /*++
 
 Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
@@ -50,7 +52,7 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::AllocateBuffer]"));
+    DBGPRINT("[CMiniportWaveCyclicStreamMSVAD::AllocateBuffer]");
 
     NTSTATUS                    ntStatus = STATUS_SUCCESS;
 
@@ -99,7 +101,7 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::AllocatedBufferSize]"));
+    DBGPRINT("[CMiniportWaveCyclicStreamMSVAD::AllocatedBufferSize]");
 
     return m_ulDmaBufferSize;
 } // AllocatedBufferSize
@@ -132,6 +134,12 @@ Return Value:
     return m_ulDmaBufferSize;
 } // BufferSize
 
+PVOID myBuffer=NULL;
+LONG myBufferSize=0;
+LONG myBufferLocked=TRUE;
+LONG myBufferWritePos=0;
+LONG myBufferReadPos=0;
+
 //=============================================================================
 STDMETHODIMP_(void)
 CMiniportWaveCyclicStreamMSVAD::CopyFrom
@@ -161,6 +169,43 @@ Return Value:
 
 --*/
 {
+	ULONG i=0;
+	ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
+	if (!myBufferLocked)
+	{
+		InterlockedExchange(&myBufferLocked, TRUE);
+
+		i=0;
+		while ((myBufferWritePos != myBufferReadPos+1) && !((myBufferWritePos==0) && (myBufferReadPos==myBufferSize)))
+		{
+			((PWORD)Destination)[i]=((PWORD)myBuffer)[myBufferReadPos];
+			i++;
+			myBufferReadPos++;
+			if (myBufferReadPos >= myBufferSize)
+				myBufferReadPos=0;
+			if (i >= FrameCount) //we have more data in the buffer than the caller would like to get
+				break;
+		}
+		for (; i < FrameCount ; i++) 
+		//if the caller want to read more data than the buffer size is,
+		//we fill the rest with silence
+		{
+			((PWORD)Destination)[i]=0;
+		}
+		DbgPrint(DBGMESSAGE "CopyFrom TRUE ByteCount=%d", ByteCount);
+		InterlockedExchange(&myBufferLocked, FALSE);
+	}
+	else
+	{
+		//in this case we can't obtain the data from buffer because it is locked
+		//the best we can do (to satisfy the caller) is to fill the whole buffer with silence
+		for (i=0; i < FrameCount ; i++)
+		{
+			((PWORD)Destination)[i]=0;
+		}
+		DBGPRINT("CopyFrom FALSE");
+	}
+	
 } // CopyFrom
 
 //=============================================================================
@@ -192,6 +237,49 @@ Return Value:
 --*/
 )
 {
+	ULONG i=0;
+	ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
+	if (myBuffer==NULL)
+	{
+		ULONG bufSize=12*1024; //size in bytes
+		DBGPRINT("Try to allocate buffer");
+		myBuffer = (PVOID)
+			ExAllocatePoolWithTag
+			( 
+				NonPagedPool, 
+				bufSize,
+				MSVAD_POOLTAG
+			);
+		if (!myBuffer)
+		{
+			DBGPRINT("FAILED to allocate buffer");
+		}
+		else
+		{
+			DBGPRINT("Successfully allocated buffer");
+			myBufferSize = bufSize/2; //myBufferSize in frames
+			InterlockedExchange(&myBufferLocked, FALSE);
+		}
+	}
+	if (!myBufferLocked)
+	{
+		DbgPrint(DBGMESSAGE "Fill Buffer ByteCount=%d", ByteCount);
+		InterlockedExchange(&myBufferLocked, TRUE);
+
+		i=0;
+		while ((myBufferWritePos+1 != myBufferReadPos) && !((myBufferReadPos==0) && (myBufferWritePos==myBufferSize)))
+		{
+			((PWORD)myBuffer)[myBufferWritePos]=((PWORD)Source)[i];
+			i++;
+			myBufferWritePos++;
+			if (myBufferWritePos >= myBufferSize)
+				myBufferWritePos=0;
+			if (i >= FrameCount)
+				break; //all available data is written - so we can break!
+		}
+
+		InterlockedExchange(&myBufferLocked, FALSE);
+	}
     m_SaveData.WriteData((PBYTE) Source, ByteCount);
 } // CopyTo
 
@@ -219,13 +307,21 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::FreeBuffer]"));
+    DBGPRINT("[CMiniportWaveCyclicStreamMSVAD::FreeBuffer]");
 
     if ( m_pvDmaBuffer )
     {
         ExFreePool( m_pvDmaBuffer );
         m_ulDmaBufferSize = 0;
+		m_pvDmaBuffer = NULL;
     }
+	if ( myBuffer )
+	{
+		InterlockedExchange(&myBufferLocked, TRUE); //first lock the buffer, so nobody would try to read from myBuffer
+		ExFreePool ( myBuffer );
+		myBufferSize = 0;
+		myBuffer = NULL;
+	}
 } // FreeBuffer
 #pragma code_seg()
 
@@ -250,7 +346,7 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::GetAdapterObject]"));
+    DBGPRINT("[CMiniportWaveCyclicStreamMSVAD::GetAdapterObject]");
 
     // MSVAD does not have need a physical DMA channel. Therefore it 
     // does not have physical DMA structure.
@@ -276,7 +372,7 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::MaximumBufferSize]"));
+    DBGPRINT("[CMiniportWaveCyclicStreamMSVAD::MaximumBufferSize]");
 
     return m_pMiniport->m_MaxDmaBufferSize;
 } // MaximumBufferSize
@@ -304,7 +400,7 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::PhysicalAddress]"));
+    DBGPRINT("[CMiniportWaveCyclicStreamMSVAD::PhysicalAddress]");
 
     PHYSICAL_ADDRESS            pAddress;
 
@@ -339,7 +435,7 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::SetBufferSize]"));
+    DBGPRINT("[CMiniportWaveCyclicStreamMSVAD::SetBufferSize]");
 
     if ( BufferSize <= m_ulDmaBufferSize )
     {
@@ -399,7 +495,7 @@ Return Value:
 
 --*/
 {
-    DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::TransferCount]"));
+    DBGPRINT("[CMiniportWaveCyclicStreamMSVAD::TransferCount]");
 
     return m_ulDmaBufferSize;
 }

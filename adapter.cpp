@@ -31,7 +31,7 @@ NTSTATUS CreateMiniportWaveCyclicMSVAD(
     IN  POOL_TYPE
 );
 
-NTSTATUS CreateMiniportTopologyMSVAD( 
+NTSTATUS CreateMiniportTopology( 
     OUT PUNKNOWN *,
     IN  REFCLSID,
     IN  PUNKNOWN,
@@ -336,7 +336,7 @@ Return Value:
                 L"Topology",
                 CLSID_PortTopology,
                 CLSID_PortTopology, 
-                CreateMiniportTopologyMSVAD,
+                CreateMiniportTopology,
                 pAdapterCommon,
                 NULL,
                 IID_IPortTopology,

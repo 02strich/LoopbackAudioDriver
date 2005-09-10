@@ -28,13 +28,12 @@ LINKER_FLAGS=-map
 SOURCES=\
         adapter.cpp     \
         basedma.cpp     \
-        basetopo.cpp    \
         basewave.cpp    \
         common.cpp      \
         hw.cpp          \
         kshelper.cpp    \
         savedata.cpp    \
-        mintopo.cpp     \
-        minwave.cpp     \
-        msvad.rc
+        vdctopo.cpp     \
+        vdcwave.cpp     \
+        vdcaudio.rc
 

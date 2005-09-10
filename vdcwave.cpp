@@ -15,7 +15,7 @@ Abstract:
 #include <msvad.h>
 #include <common.h>
 #include "simple.h"
-#include "minwave.h"
+#include "vdcwave.h"
 #include "wavtable.h"
 
 #pragma code_seg("PAGE")

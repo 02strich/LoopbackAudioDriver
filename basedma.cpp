@@ -1,4 +1,4 @@
-#define DBGMESSAGE "[MSVAD-Simple] basedma.cpp: "
+#define DBGMESSAGE "[VDC-Audio] basedma.cpp: "
 #define DBGPRINT(x) DbgPrint(DBGMESSAGE x)
 /*++
 
@@ -181,10 +181,14 @@ Return Value:
 			((PWORD)Destination)[i]=((PWORD)myBuffer)[myBufferReadPos];
 			i++;
 			myBufferReadPos++;
-			if (myBufferReadPos >= myBufferSize)
+			if (myBufferReadPos >= myBufferSize) //Loop the buffer
 				myBufferReadPos=0;
 			if (i >= FrameCount) //we have more data in the buffer than the caller would like to get
 				break;
+		}
+		if (i<FrameCount) //just for debugging
+		{
+			DbgPrint(DBGMESSAGE "CopyFrom - need more data! NeedCount=%d", FrameCount-i);
 		}
 		for (; i < FrameCount ; i++) 
 		//if the caller want to read more data than the buffer size is,
@@ -267,15 +271,20 @@ Return Value:
 		InterlockedExchange(&myBufferLocked, TRUE);
 
 		i=0;
-		while ((myBufferWritePos+1 != myBufferReadPos) && !((myBufferReadPos==0) && (myBufferWritePos==myBufferSize)))
+		while (i < FrameCount) //while data is available
 		{
+			//test wether we arrived at the read-pos (this should not happen)
+			if (! ((myBufferWritePos+1 != myBufferReadPos) && !((myBufferReadPos==0) && (myBufferWritePos==myBufferSize))) )
+			{
+				DbgPrint(DBGMESSAGE "CopyTo - there is no space for new data! NeedCount=%d", FrameCount-i);
+				break; //we have to break - because there is no space for the rest data
+			}
+
 			((PWORD)myBuffer)[myBufferWritePos]=((PWORD)Source)[i];
 			i++;
 			myBufferWritePos++;
-			if (myBufferWritePos >= myBufferSize)
+			if (myBufferWritePos >= myBufferSize) //Loop the buffer
 				myBufferWritePos=0;
-			if (i >= FrameCount)
-				break; //all available data is written - so we can break!
 		}
 
 		InterlockedExchange(&myBufferLocked, FALSE);

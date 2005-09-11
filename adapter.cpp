@@ -24,7 +24,7 @@ Abstract:
 //-----------------------------------------------------------------------------
 // Externals
 //-----------------------------------------------------------------------------
-NTSTATUS CreateMiniportWaveCyclicMSVAD( 
+NTSTATUS CreateMiniportWaveCyclic( 
     OUT PUNKNOWN *,
     IN  REFCLSID,
     IN  PUNKNOWN,
@@ -353,7 +353,7 @@ Return Value:
                 L"Wave",
                 CLSID_PortWaveCyclic,
                 CLSID_PortWaveCyclic,   
-                CreateMiniportWaveCyclicMSVAD,
+                CreateMiniportWaveCyclic,
                 pAdapterCommon,
                 NULL,
                 IID_IPortWaveCyclic,

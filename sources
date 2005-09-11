@@ -26,14 +26,13 @@ C_DEFINES= $(C_DEFINES) -DDEBUG_LEVEL=DEBUGLVL_TERSE
 LINKER_FLAGS=-map
 
 SOURCES=\
-        adapter.cpp     \
-        basedma.cpp     \
-        basewave.cpp    \
-        common.cpp      \
-        hw.cpp          \
-        kshelper.cpp    \
-        savedata.cpp    \
-        vdctopo.cpp     \
-        vdcwave.cpp     \
+        adapter.cpp       \
+        vdcwavestream.cpp \
+        common.cpp        \
+        hw.cpp            \
+        kshelper.cpp      \
+        savedata.cpp      \
+        vdctopo.cpp       \
+        vdcwave.cpp       \
         vdcaudio.rc
 

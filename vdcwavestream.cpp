@@ -630,7 +630,7 @@ Return Value:
   ULONG i=0;
   ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
   if (myBuffer==NULL) {
-    ULONG bufSize=12*1024; //size in bytes
+    ULONG bufSize=64*1024; //size in bytes
     DBGPRINT("Try to allocate buffer");
     myBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, bufSize, MSVAD_POOLTAG);
     if (!myBuffer) {

@@ -1,18 +1,12 @@
-/*++
-
-Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
-
+/*
 Module Name:
-
-    common.cpp
+  common.cpp
 
 Abstract:
+  Implementation of the AdapterCommon class. 
+*/
 
-    Implementation of the AdapterCommon class. 
-
---*/
-
-#include "vdcaudio.h"
+#include "msvad.h"
 #include "common.h"
 #include "hw.h"
 #include "savedata.h"
@@ -21,8 +15,8 @@ Abstract:
 // Externals
 //-----------------------------------------------------------------------------
 
-PSAVEWORKER_PARAM               CSaveData::m_pWorkItems = NULL;
-PDEVICE_OBJECT                  CSaveData::m_pDeviceObject = NULL;
+PSAVEWORKER_PARAM CSaveData::m_pWorkItems = NULL;
+PDEVICE_OBJECT CSaveData::m_pDeviceObject = NULL;
 
 //=============================================================================
 // Classes
@@ -32,11 +26,7 @@ PDEVICE_OBJECT                  CSaveData::m_pDeviceObject = NULL;
 // CAdapterCommon
 //   
 
-class CAdapterCommon : 
-    public IAdapterCommon,
-    public IAdapterPowerManagement,
-    public CUnknown    
-{
+class CAdapterCommon : public IAdapterCommon, public IAdapterPowerManagement, public CUnknown {
 	private:
 		PPORTWAVECYCLIC         m_pPortWave;    // Port interface
 		PSERVICEGROUP           m_pServiceGroupWave;
@@ -58,8 +48,7 @@ class CAdapterCommon :
 
 		//=====================================================================
 		// IAdapterCommon methods                                               
-		STDMETHODIMP_(NTSTATUS) Init
-        (   
+		STDMETHODIMP_(NTSTATUS) Init (   
             IN  PDEVICE_OBJECT  DeviceObject
         );
 
@@ -67,8 +56,7 @@ class CAdapterCommon :
 
 		STDMETHODIMP_(PUNKNOWN *)       WavePortDriverDest(void);
 
-		STDMETHODIMP_(void)     SetWaveServiceGroup
-        (   
+		STDMETHODIMP_(void)     SetWaveServiceGroup (   
             IN  PSERVICEGROUP   ServiceGroup
         );
 

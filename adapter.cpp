@@ -1,13 +1,10 @@
-/*++
-
-Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
-
+/*
 Module Name:
-    adapter.cpp
+  adapter.cpp
 
 Abstract:
-    Setup and miniport installation.  No resources are used by msvad.
---*/
+  Setup and miniport installation.  No resources are used by msvad.
+*/
 
 // All the GUIDS for all the miniports end up in this object.
 #define PUT_GUIDS_HERE
@@ -61,7 +58,7 @@ extern "C" NTSTATUS DriverEntry(
     IN  PUNICODE_STRING         RegistryPathName
 )
 {
-/*++
+/*
 Routine Description:
   Installable driver initialization entry point.
   This entry point is called directly by the I/O system.
@@ -76,7 +73,7 @@ Arguments:
 Return Value:
   STATUS_SUCCESS if successful,
   STATUS_UNSUCCESSFUL otherwise.
---*/
+*/
     PAGED_CODE();
 
     NTSTATUS ntStatus;
@@ -100,7 +97,7 @@ extern "C" NTSTATUS AddDevice(
     IN  PDRIVER_OBJECT          DriverObject,
     IN  PDEVICE_OBJECT          PhysicalDeviceObject 
 )
-/*++
+/*
 Routine Description:
   The Plug & Play subsystem is handing us a brand new PDO, for which we
   (by means of INF registration) have been asked to provide a driver.
@@ -121,7 +118,7 @@ Arguments:
 
 Return Value:
   NT status code.
---*/
+*/
 {
     PAGED_CODE();
 

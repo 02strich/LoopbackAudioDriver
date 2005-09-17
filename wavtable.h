@@ -1,13 +1,14 @@
 /*
 Module Name:
-    wavtable.h
+  wavtable.h
 
 Abstract:
-    Declaration of wave miniport tables.
+  Declaration of wave miniport tables.
 */
 
 #ifndef __WAVTABLE_H_
 #define __WAVTABLE_H_
+*/
 
 //=============================================================================
 static KSDATARANGE_AUDIO PinDataRangesStream[] = {

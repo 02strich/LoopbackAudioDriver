@@ -1,18 +1,12 @@
-/*++
-
-Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
-
+/*
 Module Name:
-
-    hw.h
+  hw.h
 
 Abstract:
-
-    Declaration of MSVAD HW class. 
-    MSVAD HW has an array for storing mixer and volume settings
-    for the topology.
-
---*/
+  Declaration of MSVAD HW class. 
+  MSVAD HW has an array for storing mixer and volume settings
+  for the topology.
+*/
 
 #ifndef __HW_H_
 #define __HW_H_
@@ -21,59 +15,35 @@ Abstract:
 // Defines
 //=============================================================================
 // BUGBUG we should dynamically allocate this...
-#define MAX_TOPOLOGY_NODES      20
+#define MAX_TOPOLOGY_NODES 20
 
 //=============================================================================
 // Classes
 //=============================================================================
 ///////////////////////////////////////////////////////////////////////////////
-// CMSVADHW
+// CVDCAudioHW
 // This class represents virtual MSVAD HW. An array representing volume
 // registers and mute registers.
 
-class CMSVADHW
-{
-public:
+class CVDCAudioHW {
 protected:
-    BOOL                        m_MuteControls[MAX_TOPOLOGY_NODES];
-    LONG                        m_VolumeControls[MAX_TOPOLOGY_NODES];
-    ULONG                       m_ulMux;            // Mux selection
-
-private:
+  BOOL   m_MuteControls[MAX_TOPOLOGY_NODES];
+  LONG   m_VolumeControls[MAX_TOPOLOGY_NODES];
+  ULONG  m_ulMux;            // Mux selection
 
 public:
-    CMSVADHW();
-    
-    void                        MixerReset();
-    BOOL                        GetMixerMute
-    (
-        IN  ULONG               ulNode
-    );
-    void                        SetMixerMute
-    (
-        IN  ULONG               ulNode,
-        IN  BOOL                fMute
-    );
-    ULONG                       GetMixerMux();
-    void                        SetMixerMux
-    (
-        IN  ULONG               ulNode
-    );
-    LONG                        GetMixerVolume
-    (   
-        IN  ULONG               ulNode,
-        IN  LONG                lChannel
-    );
-    void                        SetMixerVolume
-    (   
-        IN  ULONG               ulNode,
-        IN  LONG                lChannel,
-        IN  LONG                lVolume
-    );
+  CVDCAudioHW();
+  void MixerReset();
+  
+  BOOL GetMixerMute(IN ULONG ulNode);
+  void SetMixerMute(IN ULONG ulNode, IN BOOL fMute);
 
-protected:
-private:
+  ULONG GetMixerMux();
+  void SetMixerMux(IN ULONG ulNode);
+
+  LONG GetMixerVolume(IN ULONG ulNode, IN LONG lChannel);
+  void SetMixerVolume(IN ULONG ulNode, IN LONG lChannel, IN LONG lVolume);
 };
-typedef CMSVADHW                *PCMSVADHW;
+typedef CVDCAudioHW *PCVDCAudioHW;
 
 #endif

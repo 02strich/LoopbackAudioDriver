@@ -1,13 +1,14 @@
 /*
 Module Name:
-    toptable.h
+  toptable.h
 
 Abstract:
-    Declaration of topology tables.
+ Declaration of topology tables.
 */
 
 #ifndef __TOPTABLE_H_
 #define __TOPTABLE_H_
+*/
 
 //=============================================================================
 static KSDATARANGE PinDataRangesBridge[] = {

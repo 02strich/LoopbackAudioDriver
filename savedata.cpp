@@ -19,7 +19,7 @@ Abstract:
 
 
 --*/
-#include <msvad.h>
+#include "vdcaudio.h"
 #include "savedata.h"
 #include <stdio.h>   // This is for using swprintf..
 

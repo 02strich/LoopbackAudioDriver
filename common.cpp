@@ -12,7 +12,7 @@ Abstract:
 
 --*/
 
-#include <msvad.h>
+#include "vdcaudio.h"
 #include "common.h"
 #include "hw.h"
 #include "savedata.h"

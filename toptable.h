@@ -1,24 +1,16 @@
-/*++
-
-Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
-
+/*
 Module Name:
-
     toptable.h
 
 Abstract:
-
     Declaration of topology tables.
+*/
 
---*/
-
-#ifndef _MSVAD_TOPTABLE_H_
-#define _MSVAD_TOPTABLE_H_
+#ifndef __TOPTABLE_H_
+#define __TOPTABLE_H_
 
 //=============================================================================
-static
-KSDATARANGE PinDataRangesBridge[] =
-{
+static KSDATARANGE PinDataRangesBridge[] = {
  {
    sizeof(KSDATARANGE),
    0,
@@ -31,16 +23,12 @@ KSDATARANGE PinDataRangesBridge[] =
 };
 
 //=============================================================================
-static
-PKSDATARANGE PinDataRangePointersBridge[] =
-{
+static PKSDATARANGE PinDataRangePointersBridge[] = {
   &PinDataRangesBridge[0]
 };
 
 //=============================================================================
-static
-PCPIN_DESCRIPTOR MiniportPins[] =
-{
+static PCPIN_DESCRIPTOR MiniportPins[] = {
   // KSPIN_TOPO_WAVEOUT_SOURCE
   {
     0,
@@ -170,9 +158,7 @@ PCPIN_DESCRIPTOR MiniportPins[] =
 };
 
 //=============================================================================
-static
-PCPROPERTY_ITEM PropertiesVolume[] =
-{
+static PCPROPERTY_ITEM PropertiesVolume[] = {
     {
     &KSPROPSETID_Audio,
     KSPROPERTY_AUDIO_VOLUMELEVEL,
@@ -190,9 +176,7 @@ PCPROPERTY_ITEM PropertiesVolume[] =
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationVolume, PropertiesVolume);
 
 //=============================================================================
-static
-PCPROPERTY_ITEM PropertiesMute[] =
-{
+static PCPROPERTY_ITEM PropertiesMute[] = {
   {
     &KSPROPSETID_Audio,
     KSPROPERTY_AUDIO_MUTE,
@@ -210,9 +194,7 @@ PCPROPERTY_ITEM PropertiesMute[] =
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationMute, PropertiesMute);
 
 //=============================================================================
-static
-PCPROPERTY_ITEM PropertiesMux[] =
-{
+static PCPROPERTY_ITEM PropertiesMux[] = {
   {
     &KSPROPSETID_Audio,
     KSPROPERTY_AUDIO_MUX_SOURCE,
@@ -230,9 +212,7 @@ PCPROPERTY_ITEM PropertiesMux[] =
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationMux, PropertiesMux);
 
 //=============================================================================
-static
-PCNODE_DESCRIPTOR TopologyNodes[] =
-{
+static PCNODE_DESCRIPTOR TopologyNodes[] = {
   // KSNODE_TOPO_WAVEOUT_VOLUME
   {
     0,                      // Flags
@@ -307,9 +287,7 @@ PCNODE_DESCRIPTOR TopologyNodes[] =
 };
 
 //=============================================================================
-static
-PCCONNECTION_DESCRIPTOR MiniportConnections[] =
-{
+static PCCONNECTION_DESCRIPTOR MiniportConnections[] = {
   //  FromNode,                     FromPin,                        ToNode,                      ToPin
   {   PCFILTER_NODE,                KSPIN_TOPO_WAVEOUT_SOURCE,      KSNODE_TOPO_WAVEOUT_VOLUME,  1 },
   {   KSNODE_TOPO_WAVEOUT_VOLUME,   0,                              KSNODE_TOPO_WAVEOUT_MUTE,    1 },
@@ -332,9 +310,7 @@ PCCONNECTION_DESCRIPTOR MiniportConnections[] =
 };
 
 //=============================================================================
-static
-PCFILTER_DESCRIPTOR MiniportFilterDescriptor =
-{
+static PCFILTER_DESCRIPTOR MiniportFilterDescriptor = {
   0,                                  // Version
   NULL,                               // AutomationTable
   sizeof(PCPIN_DESCRIPTOR),           // PinSize

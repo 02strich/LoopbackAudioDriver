@@ -6,9 +6,8 @@ Abstract:
     Implementation of wavecyclic miniport.
 */
 
-#include "msvad.h"
 #include "common.h"
-#include "simple.h"
+#include "vdcaudio.h"
 #include "vdcwave.h"
 #include "vdcwavestream.h"
 #include "wavtable.h"

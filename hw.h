@@ -14,8 +14,8 @@ Abstract:
 
 --*/
 
-#ifndef _MSVAD_HW_H_
-#define _MSVAD_HW_H_
+#ifndef __HW_H_
+#define __HW_H_
 
 //=============================================================================
 // Defines

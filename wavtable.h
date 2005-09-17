@@ -1,24 +1,16 @@
-/*++
-
-Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
-
+/*
 Module Name:
-
     wavtable.h
 
 Abstract:
-
     Declaration of wave miniport tables.
+*/
 
---*/
-
-#ifndef _MSVAD_WAVTABLE_H_
-#define _MSVAD_WAVTABLE_H_
+#ifndef __WAVTABLE_H_
+#define __WAVTABLE_H_
 
 //=============================================================================
-static
-KSDATARANGE_AUDIO PinDataRangesStream[] =
-{
+static KSDATARANGE_AUDIO PinDataRangesStream[] = {
     {
         {
             sizeof(KSDATARANGE_AUDIO),
@@ -37,16 +29,12 @@ KSDATARANGE_AUDIO PinDataRangesStream[] =
     },
 };
 
-static
-PKSDATARANGE PinDataRangePointersStream[] =
-{
+static PKSDATARANGE PinDataRangePointersStream[] = {
     PKSDATARANGE(&PinDataRangesStream[0])
 };
 
 //=============================================================================
-static
-KSDATARANGE PinDataRangesBridge[] =
-{
+static KSDATARANGE PinDataRangesBridge[] = {
     {
         sizeof(KSDATARANGE),
         0,
@@ -58,16 +46,12 @@ KSDATARANGE PinDataRangesBridge[] =
     }
 };
 
-static
-PKSDATARANGE PinDataRangePointersBridge[] =
-{
+static PKSDATARANGE PinDataRangePointersBridge[] = {
     &PinDataRangesBridge[0]
 };
 
 //=============================================================================
-static
-PCPIN_DESCRIPTOR MiniportPins[] =
-{
+static PCPIN_DESCRIPTOR MiniportPins[] = {
     // Wave In Streaming Pin (Capture) KSPIN_WAVE_CAPTURE_SINK
     {
         MAX_OUTPUT_STREAMS,
@@ -154,9 +138,7 @@ PCPIN_DESCRIPTOR MiniportPins[] =
 };
 
 //=============================================================================
-static
-PCNODE_DESCRIPTOR MiniportNodes[] =
-{
+static PCNODE_DESCRIPTOR MiniportNodes[] = {
     // KSNODE_WAVE_ADC
     {
         0,                      // Flags
@@ -174,9 +156,7 @@ PCNODE_DESCRIPTOR MiniportNodes[] =
 };
 
 //=============================================================================
-static
-PCCONNECTION_DESCRIPTOR MiniportConnections[] =
-{
+static PCCONNECTION_DESCRIPTOR MiniportConnections[] = {
     { PCFILTER_NODE,        KSPIN_WAVE_CAPTURE_SOURCE,  KSNODE_WAVE_ADC,     1 },    
     { KSNODE_WAVE_ADC,      0,                          PCFILTER_NODE,       KSPIN_WAVE_CAPTURE_SINK },    
 
@@ -185,9 +165,7 @@ PCCONNECTION_DESCRIPTOR MiniportConnections[] =
 };
 
 //=============================================================================
-static
-PCPROPERTY_ITEM PropertiesWaveFilter[] =
-{
+static PCPROPERTY_ITEM PropertiesWaveFilter[] = {
   {
     &KSPROPSETID_General,
     KSPROPERTY_GENERAL_COMPONENTID,
@@ -199,9 +177,7 @@ PCPROPERTY_ITEM PropertiesWaveFilter[] =
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationWaveFilter, PropertiesWaveFilter);
 
 //=============================================================================
-static
-PCFILTER_DESCRIPTOR MiniportFilterDescriptor =
-{
+static PCFILTER_DESCRIPTOR MiniportFilterDescriptor = {
     0,                                  // Version
     &AutomationWaveFilter,              // AutomationTable
     sizeof(PCPIN_DESCRIPTOR),           // PinSize

@@ -8,11 +8,11 @@ Module Name:
 
 Abstract:
 
-    Helper functions for msvad
+    Kernel streaming helper functions
 
 --*/
-#ifndef _MSVAD_KSHELPER_H_
-#define _MSVAD_KSHELPER_H_
+#ifndef __KSHELPER_H_
+#define __KSHELPER_H_
 
 #include <portcls.h>
 #include <ksdebug.h>

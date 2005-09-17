@@ -6,7 +6,7 @@ Abstract:
   WaveCyclicStream-Miniport and IDmaChannel implementation. Does nothing HW related.
 */
 
-#include "msvad.h"
+#include "vdcaudio.h"
 #include "common.h"
 #include "vdcwave.h"
 #include "vdcwavestream.h"
@@ -164,7 +164,7 @@ Return Value:
       m_pDpc = (PRKDPC) ExAllocatePoolWithTag(
         NonPagedPool,
         sizeof(KDPC),
-        MSVAD_POOLTAG
+        VDCAUDIO_POOLTAG
       );
       if (!m_pDpc) {
         DPF(D_TERSE, ("[Could not allocate memory for DPC]"));
@@ -176,7 +176,7 @@ Return Value:
     m_pTimer = (PKTIMER) ExAllocatePoolWithTag(
       NonPagedPool,
       sizeof(KTIMER),
-      MSVAD_POOLTAG
+      VDCAUDIO_POOLTAG
     );
     if (!m_pTimer) {
       DPF(D_TERSE, ("[Could not allocate memory for Timer]"));
@@ -502,7 +502,7 @@ Return Value:
 
   NTSTATUS ntStatus = STATUS_SUCCESS;
 
-  m_pvDmaBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, BufferSize, MSVAD_POOLTAG);
+  m_pvDmaBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, BufferSize, VDCAUDIO_POOLTAG);
   if (!m_pvDmaBuffer) {
       ntStatus = STATUS_INSUFFICIENT_RESOURCES;
   } else {
@@ -632,7 +632,7 @@ Return Value:
   if (myBuffer==NULL) {
     ULONG bufSize=64*1024; //size in bytes
     DBGPRINT("Try to allocate buffer");
-    myBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, bufSize, MSVAD_POOLTAG);
+    myBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, bufSize, VDCAUDIO_POOLTAG);
     if (!myBuffer) {
       DBGPRINT("FAILED to allocate buffer");
     } else {
@@ -816,5 +816,4 @@ Return Value:
 */
 {
   DBGPRINT("[CMiniportWaveCyclicStream::TransferCount]");
-  return m_ulDmaBufferSize;
-}
+  return m_ulDmaBuff

@@ -12,8 +12,8 @@ Abstract:
 
 --*/
 
-#ifndef _MSVAD_COMMON_H_
-#define _MSVAD_COMMON_H_
+#ifndef __COMMON_H_
+#define __COMMON_H_
 
 //=============================================================================
 // Defines

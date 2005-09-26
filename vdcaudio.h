@@ -25,14 +25,14 @@ Abstract:
 // Product Id
 // {5B722BF8-F0AB-47ee-B9C8-8D61D31375A1}
 #define STATIC_PID_VDCAUDIO 0x5b722bf8, 0xf0ab, 0x47ee, 0xb9, 0xc8, 0x8d, 0x61, 0xd3, 0x13, 0x75, 0xa1
-DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_MSVAD);
-#define PID_VDCAUDIO DEFINE_GUIDNAMED(PID_MSVAD)
+DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_VDCAUDIO);
+#define PID_VDCAUDIO DEFINE_GUIDNAMED(PID_VDCAUDIO)
 
 // Name Guid
 // {946A7B1A-EBBC-422a-A81F-F07C8D40D3B4}
 #define STATIC_NAME_VDCAUDIO 0x946a7b1a, 0xebbc, 0x422a, 0xa8, 0x1f, 0xf0, 0x7c, 0x8d, 0x40, 0xd3, 0xb4
-DEFINE_GUIDSTRUCT("946A7B1A-EBBC-422a-A81F-F07C8D40D3B4", NAME_MSVAD_SIMPLE);
-#define NAME_VDCAUDIO DEFINE_GUIDNAMED(NAME_MSVAD_SIMPLE)
+DEFINE_GUIDSTRUCT("946A7B1A-EBBC-422a-A81F-F07C8D40D3B4", NAME_VDCAUDIO);
+#define NAME_VDCAUDIO DEFINE_GUIDNAMED(NAME_VDCAUDIO)
 
 // Pool tag used for MSVAD allocations
 #define VDCAUDIO_POOLTAG           'VDCA'  
@@ -60,12 +60,12 @@ DEFINE_GUIDSTRUCT("946A7B1A-EBBC-422a-A81F-F07C8D40D3B4", NAME_MSVAD_SIMPLE);
 #define MAX_TOTAL_STREAMS           MAX_OUTPUT_STREAMS + MAX_INPUT_STREAMS                      
 
 // PCM Info
-#define MIN_CHANNELS                1       // Min Channels.
+#define MIN_CHANNELS                2       // Min Channels.
 #define MAX_CHANNELS_PCM            2       // Max Channels.
-#define MIN_BITS_PER_SAMPLE_PCM     8       // Min Bits Per Sample
+#define MIN_BITS_PER_SAMPLE_PCM     16      // Min Bits Per Sample
 #define MAX_BITS_PER_SAMPLE_PCM     16      // Max Bits Per Sample
-#define MIN_SAMPLE_RATE             4000    // Min Sample Rate
-#define MAX_SAMPLE_RATE             64000   // Max Sample Rate
+#define MIN_SAMPLE_RATE             44100   // Min Sample Rate
+#define MAX_SAMPLE_RATE             44100   // Max Sample Rate
 
 // Dma Settings.
 #define DMA_BUFFER_SIZE             0x16000

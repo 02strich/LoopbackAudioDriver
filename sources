@@ -31,7 +31,6 @@ SOURCES=\
         common.cpp        \
         hw.cpp            \
         kshelper.cpp      \
-        savedata.cpp      \
         vdctopo.cpp       \
         vdcwave.cpp       \
         vdcaudio.rc

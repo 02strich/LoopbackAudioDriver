@@ -122,15 +122,6 @@ Return Value:
     m_pDpc          = NULL;
     m_pTimer        = NULL;
     m_pvDmaBuffer   = NULL;
-
-    // If this is not the capture stream, create the output file.
-    if (!m_fCapture) {
-      DPF(D_TERSE, ("SaveData %X", &m_SaveData));
-      ntStatus = m_SaveData.SetDataFormat(DataFormat_);
-      if (NT_SUCCESS(ntStatus)) {
-            ntStatus = m_SaveData.Initialize();
-      }
-    }
   }
 
   // Allocate DMA buffer for this stream.
@@ -327,10 +318,6 @@ Return Value:
         NULL
       );
       if (NT_SUCCESS(ntStatus)) {
-          if (!m_fCapture) {
-              ntStatus = m_SaveData.SetDataFormat(Format);
-          }
-
           m_fFormatStereo = (pWfx->nChannels == 2);
           m_fFormat16Bit  = (pWfx->wBitsPerSample == 16);
           m_pMiniport->m_SamplingFrequency = pWfx->nSamplesPerSec;
@@ -431,11 +418,6 @@ Return Value:
         m_ulDmaPosition = 0;
 
         KeCancelTimer( m_pTimer );
-
-        // Wait until all work items are completed.
-        if (!m_fCapture) {
-            m_SaveData.WaitAllWorkItems();
-        }
         break;
     }
 
@@ -662,7 +644,6 @@ Return Value:
     }
   InterlockedExchange(&myBufferLocked, FALSE);
   }
-  m_SaveData.WriteData((PBYTE) Source, ByteCount);
 } // CopyTo
 
 //=============================================================================

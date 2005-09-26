@@ -10,7 +10,6 @@ Abstract:
 #define __VDCWAVESTREAM_H_
 
 #include "vdcwave.h"
-#include "savedata.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // CMiniportWaveCyclicStream 
@@ -34,8 +33,6 @@ protected:
     ULONG                       m_ulDmaBufferSize;  // Size of dma buffer
     ULONG                       m_ulDmaMovementRate;// Rate of transfer specific to system
     ULONGLONG                   m_ullDmaTimeStamp;  // Dma time elasped 
-
-    CSaveData                   m_SaveData;         // Object to save settings.
 
 public:
     DECLARE_STD_UNKNOWN();

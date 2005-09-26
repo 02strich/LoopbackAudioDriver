@@ -9,14 +9,6 @@ Abstract:
 #include "vdcaudio.h"
 #include "common.h"
 #include "hw.h"
-#include "savedata.h"
-
-//-----------------------------------------------------------------------------
-// Externals
-//-----------------------------------------------------------------------------
-
-PSAVEWORKER_PARAM CSaveData::m_pWorkItems = NULL;
-PDEVICE_OBJECT CSaveData::m_pDeviceObject = NULL;
 
 //=============================================================================
 // Classes
@@ -152,44 +144,29 @@ Return Value:
 } // NewAdapterCommon
 
 //=============================================================================
-CAdapterCommon::~CAdapterCommon
-( 
-	void 
-)
-/*++
-
+CAdapterCommon::~CAdapterCommon(void)
+/*
 Routine Description:
-
   Destructor for CAdapterCommon.
 
 Arguments:
 
 Return Value:
-
   void
-
---*/
+*/
 {
 	PAGED_CODE();
 
 	DPF_ENTER(("[CAdapterCommon::~CAdapterCommon]"));
 
     if (m_pHW)
-    {
         delete m_pHW;
-    }
-
-    CSaveData::DestroyWorkItems();
 
     if (m_pPortWave)
-	{
 	    m_pPortWave->Release();
-	}
 
 	if (m_pServiceGroupWave)
-	{
 	    m_pServiceGroupWave->Release();
-	}
 } // ~CAdapterCommon  
 
 //=============================================================================
@@ -261,13 +238,6 @@ Return Value:
     else
     {
         m_pHW->MixerReset();
-    }
-
-    // Initialize the work items for saving data to disk.
-    //
-    if (NT_SUCCESS(ntStatus))
-    {
-        ntStatus = CSaveData::InitializeWorkItems(DeviceObject);
     }
 
     return ntStatus;

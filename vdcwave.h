@@ -10,7 +10,6 @@ Abstract:
 #define __VDCWAVE_H_
 
 #include "vdcwave.h"
-#include "savedata.h"
 
 //=============================================================================
 // Referenced Forward

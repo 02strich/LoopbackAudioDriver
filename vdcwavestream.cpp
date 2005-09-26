@@ -816,4 +816,5 @@ Return Value:
 */
 {
   DBGPRINT("[CMiniportWaveCyclicStream::TransferCount]");
-  return m_ulDmaBuff
+  return m_ulDmaBufferSize;
+}

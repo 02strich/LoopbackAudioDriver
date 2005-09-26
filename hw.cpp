@@ -18,12 +18,12 @@ Abstract:
 #include "hw.h"
 
 //=============================================================================
-// CMSVADHW
+// CVDCAudioHW
 //=============================================================================
 
 //=============================================================================
 #pragma code_seg("PAGE")
-CMSVADHW::CMSVADHW()
+CVDCAudioHW::CVDCAudioHW()
 : m_ulMux(0)
 /*++
 
@@ -42,12 +42,12 @@ Return Value:
     PAGED_CODE();
     
     MixerReset();
-} // CMSVADHW
+} // CVDCAudioHW
 #pragma code_seg()
 
 //=============================================================================
 BOOL
-CMSVADHW::GetMixerMute
+CVDCAudioHW::GetMixerMute
 (
     IN  ULONG                   ulNode
 )
@@ -77,7 +77,7 @@ Return Value:
 
 //=============================================================================
 ULONG                       
-CMSVADHW::GetMixerMux()
+CVDCAudioHW::GetMixerMux()
 /*++
 
 Routine Description:
@@ -97,7 +97,7 @@ Return Value:
 
 //=============================================================================
 LONG
-CMSVADHW::GetMixerVolume
+CVDCAudioHW::GetMixerVolume
 (   
     IN  ULONG                   ulNode,
     IN  LONG                    lChannel
@@ -131,7 +131,7 @@ Return Value:
 //=============================================================================
 #pragma code_seg("PAGE")
 void 
-CMSVADHW::MixerReset()
+CVDCAudioHW::MixerReset()
 /*++
 
 Routine Description:
@@ -158,7 +158,7 @@ Return Value:
 
 //=============================================================================
 void
-CMSVADHW::SetMixerMute
+CVDCAudioHW::SetMixerMute
 (
     IN  ULONG                   ulNode,
     IN  BOOL                    fMute
@@ -189,7 +189,7 @@ Return Value:
 
 //=============================================================================
 void                        
-CMSVADHW::SetMixerMux
+CVDCAudioHW::SetMixerMux
 (
     IN  ULONG                   ulNode
 )
@@ -214,7 +214,7 @@ Return Value:
 
 //=============================================================================
 void  
-CMSVADHW::SetMixerVolume
+CVDCAudioHW::SetMixerVolume
 (   
     IN  ULONG                   ulNode,
     IN  LONG                    lChannel,

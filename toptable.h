@@ -8,7 +8,7 @@ Abstract:
 
 #ifndef __TOPTABLE_H_
 #define __TOPTABLE_H_
-*/
+
 
 //=============================================================================
 static KSDATARANGE PinDataRangesBridge[] = {

@@ -428,7 +428,7 @@ CSaveData::Initialize
             (
                 NonPagedPool,
                 m_ulBufferSize,
-                MSVAD_POOLTAG
+                VDCAUDIO_POOLTAG
             );
         if (!m_pDataBuffer)
         {
@@ -447,7 +447,7 @@ CSaveData::Initialize
                 NonPagedPool,
                 m_ulFrameCount * sizeof(BOOL) +
                 sizeof(LARGE_INTEGER),
-                MSVAD_POOLTAG
+                VDCAUDIO_POOLTAG
             );
         if (!m_fFrameUsed)
         {
@@ -515,7 +515,7 @@ CSaveData::InitializeWorkItems
         (
             NonPagedPool,
             sizeof(SAVEWORKER_PARAM) * MAX_WORKER_ITEM_COUNT,
-            MSVAD_POOLTAG
+            VDCAUDIO_POOLTAG
         );
     if (m_pWorkItems)
     {
@@ -637,7 +637,7 @@ CSaveData::SetDataFormat
                 (pwfx->wFormatTag == WAVE_FORMAT_PCM) ?
                 sizeof( PCMWAVEFORMAT ) :
                 sizeof( WAVEFORMATEX ) + pwfx->cbSize,
-                MSVAD_POOLTAG
+                VDCAUDIO_POOLTAG
             );
 
         if(m_waveFormat)

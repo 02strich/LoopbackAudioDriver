@@ -6,8 +6,8 @@ Abstract:
     Implementation of wavecyclic miniport.
 */
 
-#include "common.h"
 #include "vdcaudio.h"
+#include "common.h"
 #include "vdcwave.h"
 #include "vdcwavestream.h"
 #include "wavtable.h"
@@ -300,7 +300,7 @@ Return Value:
   // Instantiate a stream. Stream must be in
   // NonPagedPool because of file saving.
   if (NT_SUCCESS(ntStatus)) {
-    stream = new (NonPagedPool, MSVAD_POOLTAG) CMiniportWaveCyclicStream(OuterUnknown);
+    stream = new (NonPagedPool, VDCAUDIO_POOLTAG) CMiniportWaveCyclicStream(OuterUnknown);
     if (stream) {
       stream->AddRef();
       ntStatus = stream->Init(this, Pin, Capture, DataFormat);
@@ -410,11 +410,11 @@ Return Value:
         PKSCOMPONENTID pComponentId = (PKSCOMPONENTID) PropertyRequest->Value;
 
         INIT_MMREG_MID(&pComponentId->Manufacturer, MM_MICROSOFT);
-        pComponentId->Product   = PID_MSVAD;
-        pComponentId->Name      = NAME_MSVAD_SIMPLE;
+        pComponentId->Product   = PID_VDCAUDIO;
+        pComponentId->Name      = NAME_VDCAUDIO;
         pComponentId->Component = GUID_NULL; // Not used for extended caps.
-        pComponentId->Version   = MSVAD_VERSION;
-        pComponentId->Revision  = MSVAD_REVISION;
+        pComponentId->Version   = VDCAUDIO_VERSION;
+        pComponentId->Revision  = VDCAUDIO_REVISION;
 
         PropertyRequest->ValueSize = sizeof(KSCOMPONENTID);
         ntStatus = STATUS_SUCCESS;

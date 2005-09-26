@@ -8,7 +8,6 @@ Abstract:
 
 #ifndef __WAVTABLE_H_
 #define __WAVTABLE_H_
-*/
 
 //=============================================================================
 static KSDATARANGE_AUDIO PinDataRangesStream[] = {

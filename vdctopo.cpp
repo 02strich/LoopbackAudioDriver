@@ -6,8 +6,8 @@ Abstract:
   Implementation of topology miniport.
 */
 
-#include "common.h"
 #include "vdcaudio.h"
+#include "common.h"
 #include "vdcwave.h"
 #include "vdctopo.h"
 #include "toptable.h"

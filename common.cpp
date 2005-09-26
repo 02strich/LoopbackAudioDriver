@@ -6,7 +6,7 @@ Abstract:
   Implementation of the AdapterCommon class. 
 */
 
-#include "msvad.h"
+#include "vdcaudio.h"
 #include "common.h"
 #include "hw.h"
 #include "savedata.h"
@@ -33,7 +33,7 @@ class CAdapterCommon : public IAdapterCommon, public IAdapterPowerManagement, pu
 		PDEVICE_OBJECT          m_pDeviceObject;      
 		DEVICE_POWER_STATE      m_PowerState;        
 
-        PCMSVADHW               m_pHW;          // Virtual MSVAD HW object
+        PCVDCAudioHW            m_pHW;          // Virtual MSVAD HW object
 
 	public:
 		//=====================================================================
@@ -252,7 +252,7 @@ Return Value:
 
     // Initialize HW.
     // 
-    m_pHW = new (NonPagedPool, MSVAD_POOLTAG)  CMSVADHW;
+    m_pHW = new (NonPagedPool, VDCAUDIO_POOLTAG)  CVDCAudioHW;
     if (!m_pHW)
     {
         DPF(D_TERSE, ("Insufficient memory for MSVAD HW"));

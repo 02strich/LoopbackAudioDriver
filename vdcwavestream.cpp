@@ -20,6 +20,7 @@ LONG myBufferSize=0;
 LONG myBufferLocked=TRUE;
 LONG myBufferWritePos=0;
 LONG myBufferReadPos=0;
+LONG myBufferReading=FALSE; //Determines wether there is a client that still reads data
 
 //=============================================================================
 CMiniportWaveCyclicStream::~CMiniportWaveCyclicStream(void)
@@ -556,26 +557,35 @@ Return Value:
   ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
   if (!myBufferLocked) {
     InterlockedExchange(&myBufferLocked, TRUE);
-    i=0;
-    while ((myBufferWritePos != myBufferReadPos+1) && !((myBufferWritePos==0) && (myBufferReadPos==myBufferSize))) {
+	
+	ULONG umyBufferSize=(ULONG)myBufferSize;
+	ULONG availableDataCount = (umyBufferSize + myBufferWritePos) - myBufferReadPos;
+	if (availableDataCount >= umyBufferSize)
+		availableDataCount -= umyBufferSize;
+    if (availableDataCount < FrameCount)  {
+	  //if the caller wants to read more data than the buffer size is,
+	  //we fill the rest with silence
+	  //we write the silence at the beginning,
+	  //because in the most cases we need to do this the caller begins to read - so we care
+	  //for a continually stream of sound data
+	  ULONG silenceCount = FrameCount - availableDataCount;
+      DbgPrint(DBGMESSAGE "CopyFrom - need more data! NeedCount=%d", silenceCount);
+	  for (i=0; i<=silenceCount ; i++) {
+		  ((PWORD)Destination)[i]=0;
+	  }
+    }
+
+    //i=0;
+    while ((i < FrameCount) && //we have more data in the buffer than the caller would like to get
+		((myBufferWritePos != myBufferReadPos+1) && !((myBufferWritePos==0) && (myBufferReadPos==myBufferSize))) ) {
       ((PWORD)Destination)[i]=((PWORD)myBuffer)[myBufferReadPos];
       i++;
       myBufferReadPos++;
       if (myBufferReadPos >= myBufferSize) //Loop the buffer
 	    myBufferReadPos=0;
-      if (i >= FrameCount) //we have more data in the buffer than the caller would like to get
-        break;
     }
+	InterlockedExchange(&myBufferReading, TRUE); //now the caller reads from the buffer - so we can notify the CopyTo function
 
-	//just for debugging
-    if (i<FrameCount)  {
-      DbgPrint(DBGMESSAGE "CopyFrom - need more data! NeedCount=%d", FrameCount-i);
-    }
-    for (; i < FrameCount ; i++) {
-      //if the caller want to read more data than the buffer size is,
-      //we fill the rest with silence
-      ((PWORD)Destination)[i]=0;
-    }
     DbgPrint(DBGMESSAGE "CopyFrom TRUE ByteCount=%d", ByteCount);
     InterlockedExchange(&myBufferLocked, FALSE);
   } else {
@@ -630,10 +640,15 @@ Return Value:
 
     i=0;
     while (i < FrameCount) {//while data is available
-      //test wether we arrived at the read-pos (this should not happen)
-      if (! ((myBufferWritePos+1 != myBufferReadPos) && !((myBufferReadPos==0) && (myBufferWritePos==myBufferSize)))) {
+      //test wether we arrived at the read-pos
+      //if (! ((myBufferWritePos+1 != myBufferReadPos) && !((myBufferReadPos==0) && (myBufferWritePos==myBufferSize)))) {
+	  if ((myBufferWritePos+1==myBufferReadPos) || (myBufferReadPos==0 && myBufferWritePos==myBufferSize)){
         DbgPrint(DBGMESSAGE "CopyTo - there is no space for new data! NeedCount=%d", FrameCount-i);
-        break; //we have to break - because there is no space for the rest data
+		if (myBufferReadPos==myBufferSize)
+			myBufferReadPos=0;
+		else
+			myBufferReadPos++;
+        //break; //we have to break - because there is no space for the rest data
       }
 
       ((PWORD)myBuffer)[myBufferWritePos]=((PWORD)Source)[i];
@@ -670,10 +685,13 @@ Return Value:
     m_pvDmaBuffer = NULL;
   }
   if ( myBuffer ) {
-    InterlockedExchange(&myBufferLocked, TRUE); //first lock the buffer, so nobody would try to read from myBuffer
-    ExFreePool ( myBuffer );
-    myBufferSize = 0;
-    myBuffer = NULL;
+	if (!myBufferLocked)
+	{
+		InterlockedExchange(&myBufferLocked, TRUE); //first lock the buffer, so nobody would try to read from myBuffer
+	    ExFreePool ( myBuffer );
+		myBufferSize = 0;
+	    myBuffer = NULL;
+	}
   }
 } // FreeBuffer
 #pragma code_seg()

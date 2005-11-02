@@ -20,6 +20,7 @@ Abstract:
 #define VER_FILEDESCRIPTION_STR     "Microsoft Virtual Audio Device"
 #define VER_INTERNALNAME_STR        "msvad.sys"
 #define VER_ORIGINALFILENAME_STR    "msvad.sys"
+#define VER_COMPANYNAME_STR			"test"
 
 #define VER_LEGALCOPYRIGHT_YEARS    "1997-2000"
 #define VER_LEGALCOPYRIGHT_STR	    "Copyright (C) Microsoft Corp." VER_LEGALCOPYRIGHT_YEARS

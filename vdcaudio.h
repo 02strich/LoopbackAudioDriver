@@ -47,7 +47,7 @@ DEFINE_GUIDSTRUCT("946A7B1A-EBBC-422a-A81F-F07C8D40D3B4", NAME_VDCAUDIO);
 #define D_TERSE                     DEBUGLVL_TERSE          
 #define D_ERROR                     DEBUGLVL_ERROR          
 #define DPF                         _DbgPrintF
-#define DPF_ENTER(x)                DPF(D_FUNC, x)
+#define DPF_ENTER(x)                DPF(D_BLAB, x)
 
 // Channel orientation
 #define CHAN_LEFT                   0

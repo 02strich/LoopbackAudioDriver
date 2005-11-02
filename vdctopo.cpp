@@ -537,7 +537,7 @@ Return Value:
 */
 {
   PAGED_CODE();
-  DPF_ENTER(("[CMiniportTopologyMSVAD::PropertyHandlerVolume]"));
+  DPF_ENTER(("[CMiniportTopology::PropertyHandlerVolume]"));
 
   NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
   LONG lChannel;

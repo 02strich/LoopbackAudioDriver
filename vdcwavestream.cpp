@@ -5,22 +5,15 @@ Module Name:
 Abstract:
   WaveCyclicStream-Miniport and IDmaChannel implementation. Does nothing HW related.
 */
+#include <math.h>
 
 #include "vdcaudio.h"
 #include "common.h"
 #include "vdcwave.h"
 #include "vdcwavestream.h"
 
-#define DBGMESSAGE "[VDC-Audio] basedma.cpp: "
+#define DBGMESSAGE "[VDC-Audio] vdcwavestream.cpp: "
 #define DBGPRINT(x) DbgPrint(DBGMESSAGE x)
-
-// Globale Variablen:
-PVOID myBuffer=NULL;
-LONG myBufferSize=0;
-LONG myBufferLocked=TRUE;
-LONG myBufferWritePos=0;
-LONG myBufferReadPos=0;
-LONG myBufferReading=FALSE; //Determines wether there is a client that still reads data
 
 //=============================================================================
 CMiniportWaveCyclicStream::~CMiniportWaveCyclicStream(void)
@@ -101,6 +94,12 @@ Return Value:
   m_ulDmaMovementRate = 0;    
   m_ullDmaTimeStamp = 0;
 
+  myBuffer = NULL;
+  myBufferSize = 0;
+  myBufferLocked = TRUE;
+  myBufferWritePos = 0;
+  myBufferReadPos = 0;
+  myBufferReading = FALSE;
 
 
   NTSTATUS ntStatus = STATUS_SUCCESS;
@@ -586,7 +585,7 @@ Return Value:
     }
 	InterlockedExchange(&myBufferReading, TRUE); //now the caller reads from the buffer - so we can notify the CopyTo function
 
-    DbgPrint(DBGMESSAGE "CopyFrom TRUE ByteCount=%d", ByteCount);
+    //DbgPrint(DBGMESSAGE "CopyFrom TRUE ByteCount=%d", ByteCount);
     InterlockedExchange(&myBufferLocked, FALSE);
   } else {
     //in this case we can't obtain the data from buffer because it is locked
@@ -619,8 +618,19 @@ Return Value:
 */
 
 {
+  //resampling
+  PVOID sampleBuffer=NULL;
+  long newByteCount=0;
+  sampleBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, ByteCount*3, VDCAUDIO_POOLTAG);
+  if(!sampleBuffer) {
+    DBGPRINT("FAILED to allocate sample buffer.");
+  } else {
+    newByteCount = zoh_process((PWORD)Source, (PWORD)sampleBuffer, ByteCount/2, ByteCount+1,2);
+    DbgPrint("Frames produced: %d", newByteCount);
+  }
+
   ULONG i=0;
-  ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
+  ULONG FrameCount = newByteCount/2; //we guess 16-Bit sample rate
   if (myBuffer==NULL) {
     ULONG bufSize=64*1024; //size in bytes
     DBGPRINT("Try to allocate buffer");
@@ -635,7 +645,7 @@ Return Value:
   }
   
   if (!myBufferLocked) {
-    DbgPrint(DBGMESSAGE "Fill Buffer ByteCount=%d", ByteCount);
+    //DbgPrint(DBGMESSAGE "Fill Buffer ByteCount=%d", ByteCount);
     InterlockedExchange(&myBufferLocked, TRUE);
 
     i=0;
@@ -816,4 +826,51 @@ Return Value:
 {
   DBGPRINT("[CMiniportWaveCyclicStream::TransferCount]");
   return m_ulDmaBufferSize;
+}
+
+//=============================================================================
+long CMiniportWaveCyclicStream::zoh_process (PWORD source, PWORD destination, long input_frames, long output_frames, int channels)
+{	
+  KFLOATING_SAVE saveData;
+  NTSTATUS status;
+  status = KeSaveFloatingPointState(&saveData);
+
+  if(NT_SUCCESS(status)) {
+    long in_count, out_count, in_used, out_gen;
+    double src_ratio, input_index;
+    int ch;
+
+    in_count = input_frames * channels;
+    out_count = output_frames * channels;
+    in_used = out_gen = 0;
+
+    src_ratio = m_pMiniport->m_SamplingFrequency / 44100;
+    input_index = 0; // TODO: Unbekannt
+
+    in_used += channels * (long)(floor(input_index));
+    input_index -= floor(input_index);
+
+    /* Main processing loop. */
+    while (out_gen < out_count && in_used + channels * input_index <= in_count) {
+      for (ch = 0 ; ch < channels ; ch++) {
+        destination[out_gen] = source[in_used - channels + ch];
+        out_gen ++ ;
+      } ;
+
+      /* Figure out the next index. */
+      input_index += 1.0 / src_ratio ;
+
+      in_used += channels * (long)(floor(input_index)) ;
+      input_index -= floor(input_index) ;
+    } ;
+
+    if (in_used > in_count) {
+      input_index += in_used - in_count ;
+      in_used = in_count ;
+    } ;
+    KeRestoreFloatingPointState(&saveData);
+  return out_gen;
+  } else {
+    return 0;
+  }
 }

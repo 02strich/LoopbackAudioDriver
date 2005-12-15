@@ -15,6 +15,16 @@ Abstract:
 #define DBGMESSAGE "[VDC-Audio] vdcwavestream.cpp: "
 #define DBGPRINT(x) DbgPrint(DBGMESSAGE x)
 
+// bitte umwandeln
+/*PVOID myBuffer=NULL;
+LONG myBufferSize=0;
+LONG myBufferLocked=TRUE;
+LONG myBufferWritePos=0;
+LONG myBufferReadPos=0;
+LONG myBufferReading=FALSE; //Determines wether there is a client that still reads data
+*/
+
+
 //=============================================================================
 CMiniportWaveCyclicStream::~CMiniportWaveCyclicStream(void)
 /*
@@ -76,6 +86,12 @@ Return Value:
   ASSERT(Miniport_);
   ASSERT(DataFormat_);
 
+  myBufferSize = 0;
+  myBufferLocked = TRUE;
+  myBufferWritePos = 0;
+  myBufferReadPos = 0;
+  myBufferReading = FALSE; //Determines wether there is a client that still reads data
+
   m_pMiniport = Miniport_;
 
   m_fCapture = FALSE;
@@ -100,7 +116,6 @@ Return Value:
   myBufferWritePos = 0;
   myBufferReadPos = 0;
   myBufferReading = FALSE;
-
 
   NTSTATUS ntStatus = STATUS_SUCCESS;
   PWAVEFORMATEX pWfx;
@@ -307,25 +322,29 @@ Return Value:
   PWAVEFORMATEX pWfx;
 
   if (m_ksState != KSSTATE_RUN) {
-    // MSVAD does not validate the format.
-    pWfx = GetWaveFormatEx(Format);
-    if (pWfx) {
-      ntStatus = KeWaitForSingleObject(
-        &m_pMiniport->m_SampleRateSync,
-        Executive,
-        KernelMode,
-        FALSE,
-        NULL
-      );
-      if (NT_SUCCESS(ntStatus)) {
-          m_fFormatStereo = (pWfx->nChannels == 2);
-          m_fFormat16Bit  = (pWfx->wBitsPerSample == 16);
-          m_pMiniport->m_SamplingFrequency = pWfx->nSamplesPerSec;
-          m_ulDmaMovementRate = pWfx->nAvgBytesPerSec;
+    //First validate the format
+    NTSTATUS ntValidFormat;
+    ntValidFormat = m_pMiniport->ValidateFormat(Format);
+    if (NT_SUCCESS(ntValidFormat)) {
+      pWfx = GetWaveFormatEx(Format);
+      if (pWfx) {
+        ntStatus = KeWaitForSingleObject(
+          &m_pMiniport->m_SampleRateSync,
+          Executive,
+          KernelMode,
+          FALSE,
+          NULL
+        );
+        if (NT_SUCCESS(ntStatus)) {
+            m_fFormatStereo = (pWfx->nChannels == 2);
+            m_fFormat16Bit  = (pWfx->wBitsPerSample == 16);
+            m_pMiniport->m_SamplingFrequency = pWfx->nSamplesPerSec;
+            m_ulDmaMovementRate = pWfx->nAvgBytesPerSec;
 
-          DPF(D_TERSE, ("New Format: %d", pWfx->nSamplesPerSec));
+            DPF(D_TERSE, ("New Format: %d", pWfx->nSamplesPerSec));
+        }
+        KeReleaseMutex(&m_pMiniport->m_SampleRateSync, FALSE);
       }
-      KeReleaseMutex(&m_pMiniport->m_SampleRateSync, FALSE);
     }
   }
 
@@ -618,19 +637,8 @@ Return Value:
 */
 
 {
-  //resampling
-  PVOID sampleBuffer=NULL;
-  long newByteCount=0;
-  sampleBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, ByteCount*3, VDCAUDIO_POOLTAG);
-  if(!sampleBuffer) {
-    DBGPRINT("FAILED to allocate sample buffer.");
-  } else {
-    newByteCount = zoh_process((PWORD)Source, (PWORD)sampleBuffer, ByteCount/2, ByteCount+1,2);
-    DbgPrint("Frames produced: %d", newByteCount);
-  }
-
   ULONG i=0;
-  ULONG FrameCount = newByteCount/2; //we guess 16-Bit sample rate
+  ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
   if (myBuffer==NULL) {
     ULONG bufSize=64*1024; //size in bytes
     DBGPRINT("Try to allocate buffer");
@@ -829,7 +837,7 @@ Return Value:
 }
 
 //=============================================================================
-long CMiniportWaveCyclicStream::zoh_process (PWORD source, PWORD destination, long input_frames, long output_frames, int channels)
+/*long CMiniportWaveCyclicStream::zoh_process (PWORD source, PWORD destination, long input_frames, long output_frames, int channels)
 {	
   KFLOATING_SAVE saveData;
   NTSTATUS status;
@@ -850,14 +858,14 @@ long CMiniportWaveCyclicStream::zoh_process (PWORD source, PWORD destination, lo
     in_used += channels * (long)(floor(input_index));
     input_index -= floor(input_index);
 
-    /* Main processing loop. */
+    // Main processing loop.
     while (out_gen < out_count && in_used + channels * input_index <= in_count) {
       for (ch = 0 ; ch < channels ; ch++) {
         destination[out_gen] = source[in_used - channels + ch];
         out_gen ++ ;
       } ;
 
-      /* Figure out the next index. */
+      // Figure out the next index.
       input_index += 1.0 / src_ratio ;
 
       in_used += channels * (long)(floor(input_index)) ;
@@ -873,4 +881,4 @@ long CMiniportWaveCyclicStream::zoh_process (PWORD source, PWORD destination, lo
   } else {
     return 0;
   }
-}
+}*/

@@ -1,29 +1,26 @@
-/*++
-
+/*
 Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
 
 Module Name:
-
-    msvad.rc
+  vdcaudio.rc
 
 Abstract:
-
-
---*/
+*/
 
 #include <windows.h>
-
 #include <ntverp.h>
 
 #define VER_FILETYPE                VFT_DRV
 #define VER_FILESUBTYPE             VFT2_DRV_SOUND
-#define VER_FILEDESCRIPTION_STR     "Microsoft Virtual Audio Device"
-#define VER_INTERNALNAME_STR        "msvad.sys"
-#define VER_ORIGINALFILENAME_STR    "msvad.sys"
+#define VER_FILEDESCRIPTION_STR     "VDC - Network Audio Device"
+#define VER_INTERNALNAME_STR        "vdcaudio.sys"
+#define VER_ORIGINALFILENAME_STR    "vdcaudio.sys"
+#define VER_COMPANYNAME_STR			"V-D-C Project"
 #define VER_COMPANYNAME_STR			"test"
 
-#define VER_LEGALCOPYRIGHT_YEARS    "1997-2000"
-#define VER_LEGALCOPYRIGHT_STR	    "Copyright (C) Microsoft Corp." VER_LEGALCOPYRIGHT_YEARS
+
+#define VER_LEGALCOPYRIGHT_YEARS    "2002-2006"
+#define VER_LEGALCOPYRIGHT_STR	    "Copyright (C) V-D-C Project " VER_LEGALCOPYRIGHT_YEARS
 
 #include "common.ver"
 

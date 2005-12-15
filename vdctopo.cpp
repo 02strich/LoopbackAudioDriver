@@ -546,7 +546,7 @@ Return Value:
   if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT) {
       ntStatus = PropertyHandlerBasicSupportVolume(PropertyRequest);
   } else {
-    ntStatus = ValidatePropertyParams(PropertyRequest, sizeof(ULONG), sizeof(KSNODEPROPERTY_AUDIO_CHANNEL));
+    ntStatus = ValidatePropertyParams(PropertyRequest, sizeof(ULONG), sizeof(KSNODEPROPERTY_AUDIO_CHANNEL)-sizeof(KSNODEPROPERTY));
     if (NT_SUCCESS(ntStatus)) {
       lChannel = * (PLONG (PropertyRequest->Instance));
       pulVolume = PULONG (PropertyRequest->Value);

@@ -16,13 +16,14 @@ Abstract:
 #define DBGPRINT(x) DbgPrint(DBGMESSAGE x)
 
 // bitte umwandeln
-/*PVOID myBuffer=NULL;
+
+PVOID myBuffer=NULL;
 LONG myBufferSize=0;
 LONG myBufferLocked=TRUE;
 LONG myBufferWritePos=0;
 LONG myBufferReadPos=0;
 LONG myBufferReading=FALSE; //Determines wether there is a client that still reads data
-*/
+//*/
 
 
 //=============================================================================
@@ -86,12 +87,6 @@ Return Value:
   ASSERT(Miniport_);
   ASSERT(DataFormat_);
 
-  myBufferSize = 0;
-  myBufferLocked = TRUE;
-  myBufferWritePos = 0;
-  myBufferReadPos = 0;
-  myBufferReading = FALSE; //Determines wether there is a client that still reads data
-
   m_pMiniport = Miniport_;
 
   m_fCapture = FALSE;
@@ -99,6 +94,13 @@ Return Value:
   m_fFormatStereo = FALSE;
   m_ksState = KSSTATE_STOP;
   m_ulPin = (ULONG)-1;
+
+  /*myBuffer=NULL;
+  myBufferSize = 0;
+  myBufferLocked = TRUE;
+  myBufferWritePos = 0;
+  myBufferReadPos = 0;
+  myBufferReading = FALSE;*/
 
   m_pDpc = NULL;
   m_pTimer = NULL;
@@ -110,12 +112,6 @@ Return Value:
   m_ulDmaMovementRate = 0;    
   m_ullDmaTimeStamp = 0;
 
-  myBuffer = NULL;
-  myBufferSize = 0;
-  myBufferLocked = TRUE;
-  myBufferWritePos = 0;
-  myBufferReadPos = 0;
-  myBufferReading = FALSE;
 
   NTSTATUS ntStatus = STATUS_SUCCESS;
   PWAVEFORMATEX pWfx;
@@ -573,7 +569,9 @@ Return Value:
 {
   ULONG i=0;
   ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
+  //DbgPrint(DBGMESSAGE "CopyFrom - ReadPos=%d",myBufferReadPos);  DbgPrint(DBGMESSAGE "CopyFrom - WritePos=%d",myBufferWritePos);
   if (!myBufferLocked) {
+	DbgPrint(DBGMESSAGE "CopyFrom - ByteCount=%d", ByteCount);
     InterlockedExchange(&myBufferLocked, TRUE);
 	
 	ULONG umyBufferSize=(ULONG)myBufferSize;
@@ -587,7 +585,7 @@ Return Value:
 	  //because in the most cases we need to do this the caller begins to read - so we care
 	  //for a continually stream of sound data
 	  ULONG silenceCount = FrameCount - availableDataCount;
-      DbgPrint(DBGMESSAGE "CopyFrom - need more data! NeedCount=%d", silenceCount);
+      //DbgPrint(DBGMESSAGE "CopyFrom - need more data! NeedCount=%d", silenceCount);
 	  for (i=0; i<=silenceCount ; i++) {
 		  ((PWORD)Destination)[i]=0;
 	  }
@@ -651,9 +649,9 @@ Return Value:
       InterlockedExchange(&myBufferLocked, FALSE);
 	}
   }
-  
+
   if (!myBufferLocked) {
-    //DbgPrint(DBGMESSAGE "Fill Buffer ByteCount=%d", ByteCount);
+    DbgPrint(DBGMESSAGE "Fill Buffer ByteCount=%d", ByteCount);
     InterlockedExchange(&myBufferLocked, TRUE);
 
     i=0;
@@ -675,7 +673,10 @@ Return Value:
       if (myBufferWritePos >= myBufferSize) //Loop the buffer
 	    myBufferWritePos=0;
     }
+  //DbgPrint(DBGMESSAGE "CopyTo - ReadPos=%d",myBufferReadPos);  DbgPrint(DBGMESSAGE "CopyTo - WritePos=%d",myBufferWritePos);
   InterlockedExchange(&myBufferLocked, FALSE);
+  //DbgPrint(DBGMESSAGE "(2) CopyTo - ReadPos=%d",myBufferReadPos);  DbgPrint(DBGMESSAGE "(2) CopyTo - WritePos=%d",myBufferWritePos);
+  //DbgPrint(DBGMESSAGE "(2) CopyTo - Locked=%d",myBufferLocked);
   }
 } // CopyTo
 

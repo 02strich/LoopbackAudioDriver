@@ -189,6 +189,15 @@ Return Value:
   m_MinSampleRatePcm      = MIN_SAMPLE_RATE;
   m_MaxSampleRatePcm      = MAX_SAMPLE_RATE;
 
+  // eigenes
+  myBuffer=NULL;
+  myBufferSize = 0;
+  myBufferLocked = TRUE;
+  myBufferWritePos = 0;
+  myBufferReadPos = 0;
+  myBufferReading = FALSE;
+  // eigenes
+
   // AddRef() is required because we are keeping this pointer.
   m_Port = Port_;
   m_Port->AddRef();

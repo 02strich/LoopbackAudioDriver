@@ -69,6 +69,15 @@ public:
 
   IMP_IMiniportWaveCyclic;
 
+  //--> muss hier her, da CopyTo und CopyFrom in verschiedenen Stream-Instanzen aufgerufen werden.
+  PVOID myBuffer;
+  LONG myBufferSize;
+  LONG myBufferLocked;
+  LONG myBufferWritePos;
+  LONG myBufferReadPos;
+  LONG myBufferReading; //Determines wether there is a client that still reads data
+  
+
   // Property Handler
   NTSTATUS PropertyHandlerGeneric(IN PPCPROPERTY_REQUEST PropertyRequest);
   NTSTATUS PropertyHandlerComponentId(IN PPCPROPERTY_REQUEST PropertyRequest);

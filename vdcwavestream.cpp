@@ -5,8 +5,6 @@ Module Name:
 Abstract:
   WaveCyclicStream-Miniport and IDmaChannel implementation. Does nothing HW related.
 */
-#include <math.h>
-
 #include "vdcaudio.h"
 #include "common.h"
 #include "vdcwave.h"
@@ -15,9 +13,7 @@ Abstract:
 #define DBGMESSAGE "[VDC-Audio] vdcwavestream.cpp: "
 #define DBGPRINT(x) DbgPrint(DBGMESSAGE x)
 
-// bitte umwandeln
-
-PVOID myBuffer=NULL;
+/*PVOID myBuffer=NULL;
 LONG myBufferSize=0;
 LONG myBufferLocked=TRUE;
 LONG myBufferWritePos=0;
@@ -94,13 +90,6 @@ Return Value:
   m_fFormatStereo = FALSE;
   m_ksState = KSSTATE_STOP;
   m_ulPin = (ULONG)-1;
-
-  /*myBuffer=NULL;
-  myBufferSize = 0;
-  myBufferLocked = TRUE;
-  myBufferWritePos = 0;
-  myBufferReadPos = 0;
-  myBufferReading = FALSE;*/
 
   m_pDpc = NULL;
   m_pTimer = NULL;
@@ -570,12 +559,12 @@ Return Value:
   ULONG i=0;
   ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
   //DbgPrint(DBGMESSAGE "CopyFrom - ReadPos=%d",myBufferReadPos);  DbgPrint(DBGMESSAGE "CopyFrom - WritePos=%d",myBufferWritePos);
-  if (!myBufferLocked) {
-	DbgPrint(DBGMESSAGE "CopyFrom - ByteCount=%d", ByteCount);
-    InterlockedExchange(&myBufferLocked, TRUE);
+  if (!m_pMiniport->myBufferLocked) {
+	//DbgPrint(DBGMESSAGE "CopyFrom - ByteCount=%d", ByteCount);
+    InterlockedExchange(&m_pMiniport->myBufferLocked, TRUE);
 	
-	ULONG umyBufferSize=(ULONG)myBufferSize;
-	ULONG availableDataCount = (umyBufferSize + myBufferWritePos) - myBufferReadPos;
+	ULONG umyBufferSize=(ULONG)m_pMiniport->myBufferSize;
+	ULONG availableDataCount = (umyBufferSize + m_pMiniport->myBufferWritePos) - m_pMiniport->myBufferReadPos;
 	if (availableDataCount >= umyBufferSize)
 		availableDataCount -= umyBufferSize;
     if (availableDataCount < FrameCount)  {
@@ -593,17 +582,17 @@ Return Value:
 
     //i=0;
     while ((i < FrameCount) && //we have more data in the buffer than the caller would like to get
-		((myBufferWritePos != myBufferReadPos+1) && !((myBufferWritePos==0) && (myBufferReadPos==myBufferSize))) ) {
-      ((PWORD)Destination)[i]=((PWORD)myBuffer)[myBufferReadPos];
+		((m_pMiniport->myBufferWritePos != m_pMiniport->myBufferReadPos+1) && !((m_pMiniport->myBufferWritePos==0) && (m_pMiniport->myBufferReadPos==m_pMiniport->myBufferSize))) ) {
+      ((PWORD)Destination)[i]=((PWORD)m_pMiniport->myBuffer)[m_pMiniport->myBufferReadPos];
       i++;
-      myBufferReadPos++;
-      if (myBufferReadPos >= myBufferSize) //Loop the buffer
-	    myBufferReadPos=0;
+      m_pMiniport->myBufferReadPos++;
+      if (m_pMiniport->myBufferReadPos >= m_pMiniport->myBufferSize) //Loop the buffer
+	    m_pMiniport->myBufferReadPos=0;
     }
-	InterlockedExchange(&myBufferReading, TRUE); //now the caller reads from the buffer - so we can notify the CopyTo function
+	InterlockedExchange(&m_pMiniport->myBufferReading, TRUE); //now the caller reads from the buffer - so we can notify the CopyTo function
 
     //DbgPrint(DBGMESSAGE "CopyFrom TRUE ByteCount=%d", ByteCount);
-    InterlockedExchange(&myBufferLocked, FALSE);
+    InterlockedExchange(&m_pMiniport->myBufferLocked, FALSE);
   } else {
     //in this case we can't obtain the data from buffer because it is locked
     //the best we can do (to satisfy the caller) is to fill the whole buffer with silence
@@ -637,44 +626,44 @@ Return Value:
 {
   ULONG i=0;
   ULONG FrameCount = ByteCount/2; //we guess 16-Bit sample rate
-  if (myBuffer==NULL) {
+  if (m_pMiniport->myBuffer==NULL) {
     ULONG bufSize=64*1024; //size in bytes
     DBGPRINT("Try to allocate buffer");
-    myBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, bufSize, VDCAUDIO_POOLTAG);
-    if (!myBuffer) {
+    m_pMiniport->myBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, bufSize, VDCAUDIO_POOLTAG);
+    if (!m_pMiniport->myBuffer) {
       DBGPRINT("FAILED to allocate buffer");
     } else {
       DBGPRINT("Successfully allocated buffer");
-      myBufferSize = bufSize/2; //myBufferSize in frames
-      InterlockedExchange(&myBufferLocked, FALSE);
+      m_pMiniport->myBufferSize = bufSize/2; //myBufferSize in frames
+      InterlockedExchange(&m_pMiniport->myBufferLocked, FALSE);
 	}
   }
 
-  if (!myBufferLocked) {
-    DbgPrint(DBGMESSAGE "Fill Buffer ByteCount=%d", ByteCount);
-    InterlockedExchange(&myBufferLocked, TRUE);
+  if (!m_pMiniport->myBufferLocked) {
+    //DbgPrint(DBGMESSAGE "Fill Buffer ByteCount=%d", ByteCount);
+    InterlockedExchange(&m_pMiniport->myBufferLocked, TRUE);
 
     i=0;
     while (i < FrameCount) {//while data is available
       //test wether we arrived at the read-pos
       //if (! ((myBufferWritePos+1 != myBufferReadPos) && !((myBufferReadPos==0) && (myBufferWritePos==myBufferSize)))) {
-	  if ((myBufferWritePos+1==myBufferReadPos) || (myBufferReadPos==0 && myBufferWritePos==myBufferSize)){
-        DbgPrint(DBGMESSAGE "CopyTo - there is no space for new data! NeedCount=%d", FrameCount-i);
-		if (myBufferReadPos==myBufferSize)
-			myBufferReadPos=0;
+	  if ((m_pMiniport->myBufferWritePos+1==m_pMiniport->myBufferReadPos) || (m_pMiniport->myBufferReadPos==0 && m_pMiniport->myBufferWritePos==m_pMiniport->myBufferSize)){
+        //DbgPrint(DBGMESSAGE "CopyTo - there is no space for new data! NeedCount=%d", FrameCount-i);
+		if (m_pMiniport->myBufferReadPos==m_pMiniport->myBufferSize)
+			m_pMiniport->myBufferReadPos=0;
 		else
-			myBufferReadPos++;
+			m_pMiniport->myBufferReadPos++;
         //break; //we have to break - because there is no space for the rest data
       }
 
-      ((PWORD)myBuffer)[myBufferWritePos]=((PWORD)Source)[i];
+      ((PWORD)m_pMiniport->myBuffer)[m_pMiniport->myBufferWritePos]=((PWORD)Source)[i];
       i++;
-      myBufferWritePos++;
-      if (myBufferWritePos >= myBufferSize) //Loop the buffer
-	    myBufferWritePos=0;
+      m_pMiniport->myBufferWritePos++;
+      if (m_pMiniport->myBufferWritePos >= m_pMiniport->myBufferSize) //Loop the buffer
+	    m_pMiniport->myBufferWritePos=0;
     }
   //DbgPrint(DBGMESSAGE "CopyTo - ReadPos=%d",myBufferReadPos);  DbgPrint(DBGMESSAGE "CopyTo - WritePos=%d",myBufferWritePos);
-  InterlockedExchange(&myBufferLocked, FALSE);
+  InterlockedExchange(&m_pMiniport->myBufferLocked, FALSE);
   //DbgPrint(DBGMESSAGE "(2) CopyTo - ReadPos=%d",myBufferReadPos);  DbgPrint(DBGMESSAGE "(2) CopyTo - WritePos=%d",myBufferWritePos);
   //DbgPrint(DBGMESSAGE "(2) CopyTo - Locked=%d",myBufferLocked);
   }
@@ -703,13 +692,13 @@ Return Value:
     m_ulDmaBufferSize = 0;
     m_pvDmaBuffer = NULL;
   }
-  if ( myBuffer ) {
-	if (!myBufferLocked)
+  if (m_pMiniport->myBuffer) {
+	if (!m_pMiniport->myBufferLocked)
 	{
-		InterlockedExchange(&myBufferLocked, TRUE); //first lock the buffer, so nobody would try to read from myBuffer
-	    ExFreePool ( myBuffer );
-		myBufferSize = 0;
-	    myBuffer = NULL;
+		InterlockedExchange(&m_pMiniport->myBufferLocked, TRUE); //first lock the buffer, so nobody would try to read from myBuffer
+	    ExFreePool(m_pMiniport->myBuffer);
+		m_pMiniport->myBufferSize = 0;
+	    m_pMiniport->myBuffer = NULL;
 	}
   }
 } // FreeBuffer

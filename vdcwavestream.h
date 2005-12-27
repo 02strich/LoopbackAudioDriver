@@ -34,16 +34,6 @@ protected:
   ULONG                     m_ulDmaMovementRate;// Rate of transfer specific to system
   ULONGLONG                 m_ullDmaTimeStamp;  // Dma time elasped 
   
-  /* //--> geht nicht, da CopyTo und CopyFrom in verschiedenen Instanzen der Klasse aufgerufen werden.
-  PVOID myBuffer;
-  LONG myBufferSize;
-  LONG myBufferLocked;
-  LONG myBufferWritePos;
-  LONG myBufferReadPos;
-  LONG myBufferReading; //Determines wether there is a client that still reads data
-  //*/
-
-
 public:
     DECLARE_STD_UNKNOWN();
     DEFINE_STD_CONSTRUCTOR(CMiniportWaveCyclicStream);

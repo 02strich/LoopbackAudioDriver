@@ -15,7 +15,6 @@ Abstract:
 #define VER_FILEDESCRIPTION_STR     "VDC - Network Audio Device"
 #define VER_INTERNALNAME_STR        "vdcaudio.sys"
 #define VER_ORIGINALFILENAME_STR    "vdcaudio.sys"
-#define VER_COMPANYNAME_STR			"V-D-C Project"
 
 
 #define VER_LEGALCOPYRIGHT_YEARS    "2002-2006"

@@ -21,18 +21,18 @@ Abstract:
 // Classes
 //=============================================================================
 ///////////////////////////////////////////////////////////////////////////////
-// CVDCAudioHW
+// CRTSDAudioHW
 // This class represents virtual MSVAD HW. An array representing volume
 // registers and mute registers.
 
-class CVDCAudioHW {
+class CRTSDAudioHW {
 protected:
   BOOL   m_MuteControls[MAX_TOPOLOGY_NODES];
   LONG   m_VolumeControls[MAX_TOPOLOGY_NODES];
   ULONG  m_ulMux;            // Mux selection
 
 public:
-  CVDCAudioHW();
+  CRTSDAudioHW();
   void MixerReset();
   
   BOOL GetMixerMute(IN ULONG ulNode);
@@ -44,6 +44,6 @@ public:
   LONG GetMixerVolume(IN ULONG ulNode, IN LONG lChannel);
   void SetMixerVolume(IN ULONG ulNode, IN LONG lChannel, IN LONG lVolume);
 };
-typedef CVDCAudioHW *PCVDCAudioHW;
+typedef CRTSDAudioHW *PCRTSDAudioHW;
 
 #endif

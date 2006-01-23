@@ -1,16 +1,10 @@
-/*++
-
-Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
-
+/*
 Module Name:
-
     kshelper.cpp
 
 Abstract:
-
     Helper functions for msvad
-
---*/
+*/
 
 #include "kshelper.h"
 
@@ -20,18 +14,15 @@ GetWaveFormatEx
 (
     IN  PKSDATAFORMAT           pDataFormat
 )
-/*++
-
+/*
 Routine Description:
-
   Returns the waveformatex for known formats. 
 
 Arguments:
-
   pDataFormat - data format.
 
 Return Value:
-    
+  
     waveformatex in DataFormat.
     NULL for unknown data formats.
 

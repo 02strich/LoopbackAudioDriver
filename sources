@@ -3,7 +3,7 @@
 
 TARGETTYPE=DRIVER
 TARGETPATH=obj
-TARGETNAME=vdcaudio
+TARGETNAME=rtsdaudio
 DRIVERTYPE=WDM
 
 TARGETLIBS= $(DDK_LIB_PATH)\portcls.lib\
@@ -28,11 +28,11 @@ C_DEFINES= $(C_DEFINES) -DDEBUG_LEVEL=DEBUGLVL_TERSE
 
 SOURCES=\
         adapter.cpp       \
-        vdcwavestream.cpp \
+        rtsdwavestream.cpp \
         common.cpp        \
         hw.cpp            \
         kshelper.cpp      \
-        vdctopo.cpp       \
-        vdcwave.cpp       \
-        vdcaudio.rc
+        rtsdtopo.cpp       \
+        rtsdwave.cpp       \
+        rtsdaudio.rc
 

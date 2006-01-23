@@ -14,16 +14,16 @@ Abstract:
 
 
 --*/
-#include "vdcaudio.h"
+#include "rtsdaudio.h"
 #include "hw.h"
 
 //=============================================================================
-// CVDCAudioHW
+// CRTSDAudioHW
 //=============================================================================
 
 //=============================================================================
 #pragma code_seg("PAGE")
-CVDCAudioHW::CVDCAudioHW()
+CRTSDAudioHW::CRTSDAudioHW()
 : m_ulMux(0)
 /*++
 
@@ -42,12 +42,12 @@ Return Value:
     PAGED_CODE();
     
     MixerReset();
-} // CVDCAudioHW
+} // CRTSDAudioHW
 #pragma code_seg()
 
 //=============================================================================
 BOOL
-CVDCAudioHW::GetMixerMute
+CRTSDAudioHW::GetMixerMute
 (
     IN  ULONG                   ulNode
 )
@@ -77,7 +77,7 @@ Return Value:
 
 //=============================================================================
 ULONG                       
-CVDCAudioHW::GetMixerMux()
+CRTSDAudioHW::GetMixerMux()
 /*++
 
 Routine Description:
@@ -97,7 +97,7 @@ Return Value:
 
 //=============================================================================
 LONG
-CVDCAudioHW::GetMixerVolume
+CRTSDAudioHW::GetMixerVolume
 (   
     IN  ULONG                   ulNode,
     IN  LONG                    lChannel
@@ -131,7 +131,7 @@ Return Value:
 //=============================================================================
 #pragma code_seg("PAGE")
 void 
-CVDCAudioHW::MixerReset()
+CRTSDAudioHW::MixerReset()
 /*++
 
 Routine Description:
@@ -158,7 +158,7 @@ Return Value:
 
 //=============================================================================
 void
-CVDCAudioHW::SetMixerMute
+CRTSDAudioHW::SetMixerMute
 (
     IN  ULONG                   ulNode,
     IN  BOOL                    fMute
@@ -189,7 +189,7 @@ Return Value:
 
 //=============================================================================
 void                        
-CVDCAudioHW::SetMixerMux
+CRTSDAudioHW::SetMixerMux
 (
     IN  ULONG                   ulNode
 )
@@ -214,7 +214,7 @@ Return Value:
 
 //=============================================================================
 void  
-CVDCAudioHW::SetMixerVolume
+CRTSDAudioHW::SetMixerVolume
 (   
     IN  ULONG                   ulNode,
     IN  LONG                    lChannel,

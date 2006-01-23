@@ -1,13 +1,13 @@
 /*
 Module Name:
-  vdctopo.h
+  rtsdtopo.h
 
 Abstract:
   Declaration of topology miniport.
 */
 
-#ifndef __VDCTOPO_H_
-#define __VDCTOPO_H_
+#ifndef __RTSDTOPO_H_
+#define __RTSDTOPO_H_
 
 //=============================================================================
 // Classes

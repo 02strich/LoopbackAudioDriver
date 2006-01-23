@@ -9,7 +9,7 @@ Abstract:
 // All the GUIDS for all the miniports end up in this object.
 #define PUT_GUIDS_HERE
 
-#include "vdcaudio.h"
+#include "rtsdaudio.h"
 #include "common.h"
 
 //-----------------------------------------------------------------------------

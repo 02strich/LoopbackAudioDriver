@@ -1,15 +1,15 @@
 /*
 Module Name:
-  vdctopo.cpp
+  rtsdtopo.cpp
 
 Abstract:
   Implementation of topology miniport.
 */
 
-#include "vdcaudio.h"
+#include "rtsdaudio.h"
 #include "common.h"
-#include "vdcwave.h"
-#include "vdctopo.h"
+#include "rtsdwave.h"
+#include "rtsdtopo.h"
 #include "toptable.h"
 
 

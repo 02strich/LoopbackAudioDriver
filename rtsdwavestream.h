@@ -1,15 +1,15 @@
 /*
 Module Name:
-    vdcwave.h
+    rtsdwave.h
 
 Abstract:
     Definition of wavecyclic miniport class.
 */
 
-#ifndef __VDCWAVESTREAM_H_
-#define __VDCWAVESTREAM_H_
+#ifndef __RTSDWAVESTREAM_H_
+#define __RTSDWAVESTREAM_H_
 
-#include "vdcwave.h"
+#include "rtsdwave.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // CMiniportWaveCyclicStream 

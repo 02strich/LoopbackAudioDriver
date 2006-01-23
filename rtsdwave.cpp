@@ -1,15 +1,15 @@
 /*
 Module Name:
-    vdcwave.cpp
+    rtsdwave.cpp
 
 Abstract:
     Implementation of wavecyclic miniport.
 */
 
-#include "vdcaudio.h"
+#include "rtsdaudio.h"
 #include "common.h"
-#include "vdcwave.h"
-#include "vdcwavestream.h"
+#include "rtsdwave.h"
+#include "rtsdwavestream.h"
 #include "wavtable.h"
 
 #pragma code_seg("PAGE")
@@ -309,7 +309,7 @@ Return Value:
   // Instantiate a stream. Stream must be in
   // NonPagedPool because of file saving.
   if (NT_SUCCESS(ntStatus)) {
-    stream = new (NonPagedPool, VDCAUDIO_POOLTAG) CMiniportWaveCyclicStream(OuterUnknown);
+    stream = new (NonPagedPool, RTSDAUDIO_POOLTAG) CMiniportWaveCyclicStream(OuterUnknown);
     if (stream) {
       stream->AddRef();
       ntStatus = stream->Init(this, Pin, Capture, DataFormat);
@@ -419,11 +419,11 @@ Return Value:
         PKSCOMPONENTID pComponentId = (PKSCOMPONENTID) PropertyRequest->Value;
 
         INIT_MMREG_MID(&pComponentId->Manufacturer, MM_MICROSOFT);
-        pComponentId->Product   = PID_VDCAUDIO;
-        pComponentId->Name      = NAME_VDCAUDIO;
+        pComponentId->Product   = PID_RTSDAUDIO;
+        pComponentId->Name      = NAME_RTSDAUDIO;
         pComponentId->Component = GUID_NULL; // Not used for extended caps.
-        pComponentId->Version   = VDCAUDIO_VERSION;
-        pComponentId->Revision  = VDCAUDIO_REVISION;
+        pComponentId->Version   = RTSDAUDIO_VERSION;
+        pComponentId->Revision  = RTSDAUDIO_REVISION;
 
         PropertyRequest->ValueSize = sizeof(KSCOMPONENTID);
         ntStatus = STATUS_SUCCESS;

@@ -1,16 +1,16 @@
 /*
 Module Name:
-  vdcwavestream.cpp
+  rtsdwavestream.cpp
 
 Abstract:
   WaveCyclicStream-Miniport and IDmaChannel implementation. Does nothing HW related.
 */
-#include "vdcaudio.h"
+#include "rtsdaudio.h"
 #include "common.h"
-#include "vdcwave.h"
-#include "vdcwavestream.h"
+#include "rtsdwave.h"
+#include "rtsdwavestream.h"
 
-#define DBGMESSAGE "[VDC-Audio] vdcwavestream.cpp: "
+#define DBGMESSAGE "[RTSD-Audio] rtsdwavestream.cpp: "
 #define DBGPRINT(x) DbgPrint(DBGMESSAGE x)
 
 /*PVOID myBuffer=NULL;
@@ -155,7 +155,7 @@ Return Value:
       m_pDpc = (PRKDPC) ExAllocatePoolWithTag(
         NonPagedPool,
         sizeof(KDPC),
-        VDCAUDIO_POOLTAG
+        RTSDAUDIO_POOLTAG
       );
       if (!m_pDpc) {
         DPF(D_TERSE, ("[Could not allocate memory for DPC]"));
@@ -167,7 +167,7 @@ Return Value:
     m_pTimer = (PKTIMER) ExAllocatePoolWithTag(
       NonPagedPool,
       sizeof(KTIMER),
-      VDCAUDIO_POOLTAG
+      RTSDAUDIO_POOLTAG
     );
     if (!m_pTimer) {
       DPF(D_TERSE, ("[Could not allocate memory for Timer]"));
@@ -488,7 +488,7 @@ Return Value:
 
   NTSTATUS ntStatus = STATUS_SUCCESS;
 
-  m_pvDmaBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, BufferSize, VDCAUDIO_POOLTAG);
+  m_pvDmaBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, BufferSize, RTSDAUDIO_POOLTAG);
   if (!m_pvDmaBuffer) {
       ntStatus = STATUS_INSUFFICIENT_RESOURCES;
   } else {
@@ -629,7 +629,7 @@ Return Value:
   if (m_pMiniport->myBuffer==NULL) {
     ULONG bufSize=64*1024; //size in bytes
     DBGPRINT("Try to allocate buffer");
-    m_pMiniport->myBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, bufSize, VDCAUDIO_POOLTAG);
+    m_pMiniport->myBuffer = (PVOID) ExAllocatePoolWithTag(NonPagedPool, bufSize, RTSDAUDIO_POOLTAG);
     if (!m_pMiniport->myBuffer) {
       DBGPRINT("FAILED to allocate buffer");
     } else {

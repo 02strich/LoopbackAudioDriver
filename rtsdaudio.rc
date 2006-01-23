@@ -1,0 +1,32 @@
+/*
+Copyright (c) 1997-2000  Microsoft Corporation All Rights Reserved
+
+Module Name:
+  rtsdaudio.rc
+
+Abstract:
+*/
+
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE                VFT_DRV
+#define VER_FILESUBTYPE             VFT2_DRV_SOUND
+#define OFFICIAL_BUILD
+#define VER_FILEDESCRIPTION_STR     "RTSD - Network Audio Device"
+#define VER_COMPANYNAME_STR         "RTSD Project"
+#define VER_PRODUCTNAME_STR			"Real Time Streaming Device"
+
+#define VER_INTERNALNAME_STR        "rtsdaudio.sys"
+#define VER_ORIGINALFILENAME_STR    "rtsdaudio.sys"
+
+#define VER_PRODUCTVERSION			1,20,00,000
+#define VER_PRODUCTVERSION_STR		"1.20"
+
+#define VER_LEGALCOPYRIGHT_YEARS    "2002-2006"
+#define VER_LEGALCOPYRIGHT_STR	    "Copyright (C) RTSD Project " VER_LEGALCOPYRIGHT_YEARS
+
+#include "common.ver"
+
+
+

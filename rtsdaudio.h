@@ -1,13 +1,13 @@
 /*
 Module Name:
-  vdcaudio.h
+  rtsdaudio.h
 
 Abstract:
   Header file for common stuff.
 */
 
-#ifndef __VDCAUDIO_H_
-#define __VDCAUDIO_H_
+#ifndef __RTSDAUDIO_H_
+#define __RTSDAUDIO_H_
 
 #include <portcls.h>
 #include <stdunk.h>
@@ -19,26 +19,26 @@ Abstract:
 //=============================================================================
 
 // Version number. Revision numbers are specified for each sample.
-#define VDCAUDIO_VERSION               1
-#define VDCAUDIO_REVISION              0
+#define RTSDAUDIO_VERSION               1
+#define RTSDAUDIO_REVISION              0
 
 // Product Id
 // {5B722BF8-F0AB-47ee-B9C8-8D61D31375A1}
-#define STATIC_PID_VDCAUDIO 0x5b722bf8, 0xf0ab, 0x47ee, 0xb9, 0xc8, 0x8d, 0x61, 0xd3, 0x13, 0x75, 0xa1
-DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_VDCAUDIO);
-#define PID_VDCAUDIO DEFINE_GUIDNAMED(PID_VDCAUDIO)
+#define STATIC_PID_RTSDAUDIO 0x5b722bf8, 0xf0ab, 0x47ee, 0xb9, 0xc8, 0x8d, 0x61, 0xd3, 0x13, 0x75, 0xa1
+DEFINE_GUIDSTRUCT("5B722BF8-F0AB-47ee-B9C8-8D61D31375A1", PID_RTSDAUDIO);
+#define PID_RTSDAUDIO DEFINE_GUIDNAMED(PID_RTSDAUDIO)
 
 // Name Guid
 // {946A7B1A-EBBC-422a-A81F-F07C8D40D3B4}
-#define STATIC_NAME_VDCAUDIO 0x946a7b1a, 0xebbc, 0x422a, 0xa8, 0x1f, 0xf0, 0x7c, 0x8d, 0x40, 0xd3, 0xb4
-DEFINE_GUIDSTRUCT("946A7B1A-EBBC-422a-A81F-F07C8D40D3B4", NAME_VDCAUDIO);
-#define NAME_VDCAUDIO DEFINE_GUIDNAMED(NAME_VDCAUDIO)
+#define STATIC_NAME_RTSDAUDIO 0x946a7b1a, 0xebbc, 0x422a, 0xa8, 0x1f, 0xf0, 0x7c, 0x8d, 0x40, 0xd3, 0xb4
+DEFINE_GUIDSTRUCT("946A7B1A-EBBC-422a-A81F-F07C8D40D3B4", NAME_RTSDAUDIO);
+#define NAME_RTSDAUDIO DEFINE_GUIDNAMED(NAME_RTSDAUDIO)
 
 // Pool tag used for MSVAD allocations
-#define VDCAUDIO_POOLTAG           'VDCA'  
+#define RTSDAUDIO_POOLTAG           'RTSD'  
 
 // Debug module name
-#define STR_MODULENAME              "VDCAudio: "
+#define STR_MODULENAME              "RTSDAudio: "
 
 // Debug utility macros
 #define D_FUNC                      4

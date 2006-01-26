@@ -6,54 +6,54 @@ Provider=%GroupName%
 DriverVer = 09/08/2005, 1.0.0.0
 
 [SourceDisksNames]
-222="VDC-Audio Driver Disk","",222
+222="RTSD-Audio Driver Disk","",222
 
 [SourceDisksFiles]
-vdcaudio.sys=222
+rtsdaudio.sys=222
 
 ;;This syntax is only recognized on Windows XP and above- it is needed to install 64-bit drivers on
 ;;Windows Server 2003 Service Pack 1 and above.
 [Manufacturer]
-%VDCMfg%=VDCProject,NTAMD64,NTIA64
+%RTSDMfg%=RTSDProject,NTAMD64,NTIA64
 
 ;;  For Windows Server 2003 Service Pack 1 and above, a 64-bit OS will not install a driver
 ;;  unless the Manufacturer and Models Sections explicitly show it is a driver for that platform
 ;;  But the individual model section decorations (or lack thereof) work as they always have.
 ;;  All of the model sections referred to are undecorated or NT-decorated, hence work on all platforms
-[VDCProject]
-%VDCAudio.DeviceDesc%=VDCAudio,,*MSVADSimple
+[RTSDProject]
+%RTSDAudio.DeviceDesc%=RTSDAudio,,*MSVADSimple
 
 ;; This section enables installing on x64 systems
-[VDCProject.NTAMD64]
-%VDCAudio.DeviceDesc%=VDCAudio,,*MSVADSimple
+[RTSDProject.NTAMD64]
+%RTSDAudio.DeviceDesc%=RTSDAudio,,*MSVADSimple
 
 ;;  This section enables installing on Itanium systems
-[VDCProject.NTIA64]
-%VDCAudio.DeviceDesc%=VDCAudio,,*MSVADSimple
+[RTSDProject.NTIA64]
+%RTSDAudio.DeviceDesc%=RTSDAudio,,*MSVADSimple
 
 [DestinationDirs]
-VDCAudio.CopyList=12
+RTSDAudio.CopyList=12
 
 ;==================================================
 ; DDInstall
 ;==================================================
-[VDCAudio]
+[RTSDAudio]
 AlsoInstall=ks.registration(ks.inf),wdmaudio.registration(wdmaudio.inf)
-CopyFiles=VDCAudio.CopyList
-AddReg=VDCAudio.AddReg
+CopyFiles=RTSDAudio.CopyList
+AddReg=RTSDAudio.AddReg
 
-[VDCAudio.CopyList]
-vdcaudio.sys
+[RTSDAudio.CopyList]
+rtsdaudio.sys
 
-[VDCAudio.Interfaces]
-AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,VDCAudio.Wave
-AddInterface=%KSCATEGORY_RENDER%,%KSNAME_Wave%,VDCAudio.Wave
-AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,VDCAudio.Topo
+[RTSDAudio.Interfaces]
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,RTSDAudio.Wave
+AddInterface=%KSCATEGORY_RENDER%,%KSNAME_Wave%,RTSDAudio.Wave
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,RTSDAudio.Topo
 
-[VDCAudio.AddReg]
+[RTSDAudio.AddReg]
 HKR,,AssociatedFilters,,"wdmaud,swmidi,redbook"
-HKR,,Driver,,vdcaudio.sys
-HKR,,NTMPDriver,,"vdcaudio.sys,sbemul.sys"
+HKR,,Driver,,rtsdaudio.sys
+HKR,,NTMPDriver,,"rtsdaudio.sys,sbemul.sys"
 
 HKR,Drivers,SubClasses,,"wave,midi,mixer"
 
@@ -61,68 +61,68 @@ HKR,Drivers\wave\wdmaud.drv,Driver,,wdmaud.drv
 HKR,Drivers\midi\wdmaud.drv,Driver,,wdmaud.drv
 HKR,Drivers\mixer\wdmaud.drv,Driver,,wdmaud.drv
 
-HKR,Drivers\wave\wdmaud.drv,Description,,%VDCAudio.DeviceDesc%
-HKR,Drivers\midi\wdmaud.drv,Description,,%VDCAudio.MIDI%
-HKR,Drivers\mixer\wdmaud.drv,Description,,%VDCAudio.DeviceDesc%
+HKR,Drivers\wave\wdmaud.drv,Description,,%RTSDAudio.DeviceDesc%
+HKR,Drivers\midi\wdmaud.drv,Description,,%RTSDAudio.MIDI%
+HKR,Drivers\mixer\wdmaud.drv,Description,,%RTSDAudio.DeviceDesc%
 
-HKLM,%MediaCategories%\%VDCAudio.NameGuid%,Name,,%VDCAudio.Name%
+HKLM,%MediaCategories%\%RTSDAudio.NameGuid%,Name,,%RTSDAudio.Name%
 
 ;=================================================
 ; DDInstall.NT
 ;=================================================
-[VDCAudio.NT]
+[RTSDAudio.NT]
 Include=ks.inf,wdmaudio.inf
 Needs=KS.Registration, WDMAUDIO.Registration
-CopyFiles=VDCAudio.CopyList
-AddReg=VDCAudio.AddReg
+CopyFiles=RTSDAudio.CopyList
+AddReg=RTSDAudio.AddReg
 
-[VDCAudio.NT.Interfaces]
-AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,VDCAudio.Wave
-AddInterface=%KSCATEGORY_RENDER%,%KSNAME_Wave%,VDCAudio.Wave
-AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,VDCAudio.Topo
+[RTSDAudio.NT.Interfaces]
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,RTSDAudio.Wave
+AddInterface=%KSCATEGORY_RENDER%,%KSNAME_Wave%,RTSDAudio.Wave
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,RTSDAudio.Topo
 
-[VDCAudio.NT.Services]
-AddService=VDCAudio,0x00000002,VDCAudio_Service_Inst
+[RTSDAudio.NT.Services]
+AddService=RTSDAudio,0x00000002,RTSDAudio_Service_Inst
 
 ;======================================================
 ; Interface install
 ;======================================================
-[VDCAudio.Wave]
-AddReg=VDCAudio.Wave.AddReg
-[VDCAudio.Wave.AddReg]
+[RTSDAudio.Wave]
+AddReg=RTSDAudio.Wave.AddReg
+[RTSDAudio.Wave.AddReg]
 HKR,,CLSID,,%Proxy.CLSID%
-HKR,,FriendlyName,,%VDCAudio.Wave.szPname%
+HKR,,FriendlyName,,%RTSDAudio.Wave.szPname%
 
-[VDCAudio.Topo]
+[RTSDAudio.Topo]
 AddReg=MSVAD.I.Topo.AddReg
-[VDCAudio.Topo.AddReg]
+[RTSDAudio.Topo.AddReg]
 HKR,,CLSID,,%Proxy.CLSID%
-HKR,,FriendlyName,,%VDCAudio.Topo.szPname%
+HKR,,FriendlyName,,%RTSDAudio.Topo.szPname%
 
 ;======================================================
 ; Service install
 ;======================================================
-[VDCAudio_Service_Inst]
-DisplayName=%VDCAudio.SvcDesc%
+[RTSDAudio_Service_Inst]
+DisplayName=%RTSDAudio.SvcDesc%
 ServiceType=1
 StartType=3
 ErrorControl=1
-ServiceBinary=%10%\system32\drivers\vdcaudio.sys
+ServiceBinary=%10%\system32\drivers\rtsdaudio.sys
 
 ;======================================================
 ; Strings
 ;======================================================
 [Strings]
-GroupName="VDC Project"
-VDCMfg="VDC Project"
-VDCAudio.Name="VDC-Audio"
-VDCAudio.NameGuid="{946A7B1A-EBBC-422a-A81F-F07C8D40D3B4}"
-VDCAudio.DeviceDesc="V-D-C Network Audio Device (WDM)"
-VDCAudio.SvcDesc="V-D-C Network Audio Device (WDM)"
+GroupName="RTSD Project"
+RTSDMfg="RTSD Project"
+RTSDAudio.Name="RTSD-Audio"
+RTSDAudio.NameGuid="{946A7B1A-EBBC-422a-A81F-F07C8D40D3B4}"
+RTSDAudio.DeviceDesc="V-D-C Network Audio Device (WDM)"
+RTSDAudio.SvcDesc="V-D-C Network Audio Device (WDM)"
 
-VDCAudio.Wave.szPname="VDCAudio Wave"
-VDCAudio.Topo.szPname="VDCAudio Topology"
-VDCAudio.MIDI="VDCAudio -> WDM Midi Device"
+RTSDAudio.Wave.szPname="RTSDAudio Wave"
+RTSDAudio.Topo.szPname="RTSDAudio Topology"
+RTSDAudio.MIDI="RTSDAudio -> WDM Midi Device"
 
 Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
 KSCATEGORY_AUDIO="{6994AD04-93EF-11D0-A3CC-00A0C9223196}"

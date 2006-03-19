@@ -21,15 +21,15 @@ rtsdaudio.sys=222
 ;;  But the individual model section decorations (or lack thereof) work as they always have.
 ;;  All of the model sections referred to are undecorated or NT-decorated, hence work on all platforms
 [RTSDProject]
-%RTSDAudio.DeviceDesc%=RTSDAudio,,*MSVADSimple
+%RTSDAudio.DeviceDesc%=RTSDAudio,,*RTSDAudio
 
 ;; This section enables installing on x64 systems
 [RTSDProject.NTAMD64]
-%RTSDAudio.DeviceDesc%=RTSDAudio,,*MSVADSimple
+%RTSDAudio.DeviceDesc%=RTSDAudio,,*RTSDAudio
 
 ;;  This section enables installing on Itanium systems
 [RTSDProject.NTIA64]
-%RTSDAudio.DeviceDesc%=RTSDAudio,,*MSVADSimple
+%RTSDAudio.DeviceDesc%=RTSDAudio,,*RTSDAudio
 
 [DestinationDirs]
 RTSDAudio.CopyList=12
